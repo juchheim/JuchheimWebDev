@@ -5,7 +5,7 @@ require __DIR__ . '/vendor/autoload.php'; // Path to the Stripe autoload file
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $plan = $_POST['plan'];
-    $priceId = ($plan === 'monthly') ? 'price_1A2B3C4D5E' : 'price_6F7G8H9I0J'; // Replace with your Stripe price IDs
+    $priceId = ($plan === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Replace with your Stripe price IDs
 
     $session = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'],
