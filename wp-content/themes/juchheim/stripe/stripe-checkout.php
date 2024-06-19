@@ -12,30 +12,30 @@ if (!isset($_POST['stripe_nonce']) || !wp_verify_nonce($_POST['stripe_nonce'], '
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $plan = $_POST['plan'];
-        $priceId = ($plan === 'monthly') ? 'price_1A2B3C4D5E' : 'price_6F7G8H9I0J'; // Replace with your actual Stripe price IDs
+    $priceId = ($plan === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Replace with your Stripe price IDs
 
-        $session = \Stripe\Checkout\Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price' => $priceId,
-                'quantity' => 1,
-            ]],
-            'mode' => 'subscription',
-            'success_url' => 'https://wordpress-1260594-4650212.cloudwaysapps.com/success?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => 'https://wordpress-1260594-4650212.cloudwaysapps.com/cancel',
-            'metadata' => [
-                'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'password' => $_POST['password'],
-            ],
-        ]);
+    $session = \Stripe\Checkout\Session::create([
+        'payment_method_types' => ['card'],
+        'line_items' => [[
+            'price' => $priceId,
+            'quantity' => 1,
+        ]],
+        'mode' => 'subscription',
+        'success_url' => 'https://wordpress-1260594-4650212.cloudwaysapps.com/success?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => 'https://wordpress-1260594-4650212.cloudwaysapps.com/cancel',
+        'metadata' => [
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'password' => $_POST['password'],
+        ],
+    ]);
 
-        echo json_encode(['id' => $session->id]);
-    } catch (Exception $e) {
-        error_log('Error creating Stripe Checkout session: ' . $e->getMessage());
-        http_response_code(500);
-        echo json_encode(['error' => 'Internal Server Error']);
-    }
-    exit;
+    echo json_encode(['id' => $session->id]);
+} catch (Exception $e) {
+    error_log('Error creating Stripe Checkout session: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Internal Server Error']);
+}
+exit;
 }
 ?>

@@ -73,7 +73,9 @@ get_header();
             <div class="tab-content">
                 <div class="content active" id="web-hosting">
 					<form id="web-hosting-form" action="#" method="post">
-                        <label for="name">Name:</label>
+						<input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+                        
+						<label for="name">Name:</label>
                         <input type="text" id="name" name="name" required>
                         
                         <label for="email">Email:</label>
