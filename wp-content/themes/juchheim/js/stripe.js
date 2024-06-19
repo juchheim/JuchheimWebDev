@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Form submitted:', form);
 
             const formData = new FormData(form);
+            formData.append('stripe_nonce', document.querySelector('input[name="stripe_nonce"]').value);
+
             try {
                 console.log('Submitting form data:', formData);
                 const response = await fetch('/wp-content/themes/juchheim/stripe/stripe-checkout.php', {
