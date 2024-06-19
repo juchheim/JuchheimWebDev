@@ -193,6 +193,11 @@ function enqueue_custom_assets() {
 add_action('wp_enqueue_scripts', 'enqueue_custom_assets');
 
 
+function enqueue_stripe_scripts() {
+    wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/');
+    wp_enqueue_script('custom-stripe-js', get_template_directory_uri() . '/js/stripe.js', array('stripe-js'), null, true);
+}
+add_action('wp_enqueue_scripts', 'enqueue_stripe_scripts');
 
 
 

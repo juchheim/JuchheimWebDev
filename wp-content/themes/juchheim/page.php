@@ -72,7 +72,7 @@ get_header();
             </ul>
             <div class="tab-content">
                 <div class="content active" id="web-hosting">
-                    <form id="web-hosting-form">
+					<form id="web-hosting-form" action="#" method="post">
                         <label for="name">Name:</label>
                         <input type="text" id="name" name="name" required>
                         
@@ -84,15 +84,15 @@ get_header();
                         
                         <label for="plan">Choose your plan:</label>
                         <select id="plan" name="plan">
-                            <option value="monthly">Monthly - $10</option>
-                            <option value="annually">Annually - $100</option>
+                            <option value="monthly">Monthly - $25</option>
+                            <option value="annually">Annually - $250</option>
                         </select>
                         
                         <button type="submit">Submit</button>
                     </form>
                 </div>
                 <div class="content" id="design-development">
-                    <form id="development-form">
+					<form id="development-form" action="#" method="post">
                         <label for="dev-name">Name:</label>
                         <input type="text" id="dev-name" name="name" required>
                         
@@ -112,7 +112,7 @@ get_header();
                     </form>
                 </div>
                 <div class="content" id="custom">
-                    <form id="custom-form">
+					<form id="custom-form" action="#" method="post">
 
 						<p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
 
