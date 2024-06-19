@@ -5,7 +5,8 @@ get_header();
 <div class="content-area">
     <main id="main" class="site-main">
         <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
-		<p>Transform your vision into reality with our custom WordPress design and development services. We create visually stunning and highly functional websites tailored to your brand’s needs.</p>
+		<p>Transform your vision into reality with our custom WordPress design and development services. Ernest Juchheim Web Development creates visually stunning and highly functional websites tailored to your brand’s needs.</p>
+		<h2>Web hosting you can cound on</h2>
 		<p>Ensure your website is always up and running with our secure, high-performance web hosting solutions. We offer reliable hosting services to keep your site fast, safe, and accessible.</p>
 
         <div id="portfolio"></div>
@@ -110,7 +111,7 @@ get_header();
                 <div class="content" id="custom">
                     <form id="custom-form">
 
-						<p class="custom-note">Choose this option if we've spoken.</p>
+						<p class="custom-note">Choose this option if we've agreed to a price based on your unique needs.</p>
 
                         <label for="custom-name">Name:</label>
                         <input type="text" id="custom-name" name="name" required>
