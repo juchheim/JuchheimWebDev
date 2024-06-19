@@ -1,17 +1,10 @@
 <?php
 require __DIR__ . '/vendor/autoload.php'; // Path to the Stripe autoload file
 
-if (!isset($_POST['stripe_nonce']) || !wp_verify_nonce($_POST['stripe_nonce'], 'stripe_nonce')) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Invalid nonce']);
-    exit;
-}
-
 \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $plan = $_POST['plan'];
+    $plan = $_POST['plan'];
     $priceId = ($plan === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Replace with your Stripe price IDs
 
     $session = \Stripe\Checkout\Session::create([
@@ -31,11 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     echo json_encode(['id' => $session->id]);
-} catch (Exception $e) {
-    error_log('Error creating Stripe Checkout session: ' . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['error' => 'Internal Server Error']);
-}
-exit;
+    exit;
 }
 ?>
