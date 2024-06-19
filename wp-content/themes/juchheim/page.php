@@ -139,7 +139,13 @@ get_header();
 <?php
 get_footer();
 ?>
+<!-- Load Stripe.js from Stripe's CDN -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- Load your custom scripts -->
 <script src="<?php echo get_template_directory_uri(); ?>/js/script.js"></script>
+<script src="<?php echo get_template_directory_uri(); ?>/js/stripe.js"></script>
+
+<!-- Inline script to verify scripts are loaded -->
 <script>
     console.log('Inline script executed');
     const scriptTag = document.querySelector('script[src*="script.js"]');
@@ -148,4 +154,12 @@ get_footer();
     } else {
         console.error('script.js is not enqueued');
     }
+
+    const scriptTagStripe = document.querySelector('script[src*="stripe.js"]');
+    if (scriptTagStripe) {
+        console.log('stripe.js is enqueued:', scriptTagStripe.src);
+    } else {
+        console.error('stripe.js is not enqueued');
+    }
 </script>
+
