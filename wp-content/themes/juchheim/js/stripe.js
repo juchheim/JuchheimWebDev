@@ -20,13 +20,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: formData,
                 });
 
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
 
-                const result = await response.json();
-                const sessionId = result.id;
+                const result = JSON.parse(text);
+                if (result.error) {
+                    throw new Error(result.message || 'Server error');
+                }
 
+                const sessionId = result.id;
                 const { error } = await stripe.redirectToCheckout({ sessionId });
 
                 if (error) {
