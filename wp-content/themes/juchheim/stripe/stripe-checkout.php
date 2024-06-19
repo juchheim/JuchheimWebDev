@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . '/vendor/autoload.php'; // Path to the Stripe autoload file
 
+// Debugging: Log incoming POST data
+error_log('Received POST data: ' . print_r($_POST, true));
+
 // Verify nonce
 if (!isset($_POST['stripe_nonce']) || !wp_verify_nonce($_POST['stripe_nonce'], 'stripe_nonce')) {
     error_log('Nonce verification failed');
@@ -9,8 +12,11 @@ if (!isset($_POST['stripe_nonce']) || !wp_verify_nonce($_POST['stripe_nonce'], '
     exit;
 }
 
+// Debugging: Set API Key and log it
 \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+error_log('Stripe API Key set');
 
+// Handling the request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $plan = $_POST['plan'];
