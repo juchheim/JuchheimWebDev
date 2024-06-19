@@ -11,11 +11,11 @@
     <div class="main-content">
         <header id="masthead" class="site-header">
             <div class="header-columns">
-                <div class="header-column"><h4><a href="#portfolio">Portfolio</a></h4></div>
+                <div class="header-column link"><h4><a href="#portfolio">Portfolio</a></h4></div>
                 <div class="header-column">
                     <?php the_custom_logo(); ?>
                 </div>
-                <div class="header-column"><h4><a href="#payments">Payments</a></h4></div>
+                <div class="header-column link"><h4><a href="#payments">Payments</a></h4></div>
             </div><!-- .header-columns -->
         </header><!-- #masthead -->
         <div class="content">

@@ -980,7 +980,7 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
-    background-color: transparent;
+    background-color: #10364d;
 }
 
 /* Parallax background */
@@ -1016,9 +1016,7 @@ body {
   	justify-content: flex-start;
 	margin: 0;
 	text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
-	padding:20px;
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px dashed rgba(255, 187, 59, 0.8);
+	
 }
 
 .header-column h4 a {
@@ -1265,3 +1263,172 @@ form button:active {
 	margin:0 !important;
 	padding-top: 50px;
 }
+
+
+.link {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 1200px) {
+    .content-area {
+        padding: 20px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .tabs-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .content-area {
+        padding: 10px;
+    }
+
+    .site-main {
+        margin-bottom: 20px;
+    }
+
+    .widget-area {
+        margin-top: 20px;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab {
+        padding: 10px 0;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+
+    .portfolio-item figcaption {
+        font-size: 0.9em;
+        padding: 5px;
+    }
+
+    .tabs-container {
+        max-width: 100%;
+    }
+
+    .header-columns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-column:nth-child(2) {
+        order: -1; /* Ensure the logo column displays first */
+        margin-bottom: 40px; /* Add vertical spacing */
+    }
+
+    .header-column {
+        margin-bottom: 10px;
+    }
+
+    .header-column h4 {
+        font-size: 1em;
+    }
+
+    .parallax {
+        height: 1000px;
+    }
+
+    .content h1 {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+    }
+
+    .content-area {
+        padding: 5px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs-container {
+        max-width: 100%;
+    }
+
+    .tab {
+        padding: 8px 0;
+    }
+
+    .tab-content {
+        padding: 10px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    form input, form select, form button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .custom-note {
+        font-size: 12px;
+    }
+
+    .header-columns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-column:nth-child(2) {
+        order: -1; /* Ensure the logo column displays first */
+        margin-bottom: 40px; /* Add vertical spacing */
+    }
+
+    .header-column {
+        margin-bottom: 5px;
+    }
+
+    .header-column h4 {
+        font-size: 0.8em;
+    }
+
+    .parallax {
+        height: 800px;
+    }
+
+    .content h1 {
+        font-size: 1.2em;
+    }
+
+    .content {
+        padding: 10px;
+    }
+}
+

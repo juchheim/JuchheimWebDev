@@ -6,7 +6,7 @@ get_header();
     <main id="main" class="site-main">
         <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
 		<p>Transform your vision into reality with our custom WordPress design and development services. Ernest Juchheim Web Development creates visually stunning and highly functional websites tailored to your brand’s needs.</p>
-		<h2>Web hosting you can cound on</h2>
+		<h2>Web hosting you can count on</h2>
 		<p>Ensure your website is always up and running with our secure, high-performance web hosting solutions. We offer reliable hosting services to keep your site fast, safe, and accessible.</p>
 
         <div id="portfolio"></div>
