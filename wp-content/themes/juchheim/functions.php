@@ -185,12 +185,9 @@ add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 
 
 function enqueue_custom_assets() {
-    $style_url = get_template_directory_uri() . '/style.css';
     $script_url = get_template_directory_uri() . '/js/script.js';
-    error_log('Enqueuing style: ' . $style_url);
     error_log('Enqueuing script: ' . $script_url);
 
-    wp_enqueue_style('custom-style', $style_url);
     wp_enqueue_script('custom-script', $script_url, array(), '1.0', true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_assets');

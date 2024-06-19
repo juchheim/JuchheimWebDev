@@ -7,6 +7,10 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+	<div class="top-links">
+        <a href="#portfolio">Portfolio</a>
+        <a href="#payments">Payments</a>
+    </div>
     <div class="parallax"></div> <!-- Parallax background -->
     <div class="main-content">
         <header id="masthead" class="site-header">

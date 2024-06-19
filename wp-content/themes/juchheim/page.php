@@ -5,9 +5,12 @@ get_header();
 <div class="content-area">
     <main id="main" class="site-main">
         <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
-		<p>Transform your vision into reality with our custom WordPress design and development services. Ernest Juchheim Web Development creates visually stunning and highly functional websites tailored to your brand’s needs.</p>
-		<h2>Web hosting you can count on</h2>
-		<p>Ensure your website is always up and running with our secure, high-performance web hosting solutions. We offer reliable hosting services to keep your site fast, safe, and accessible.</p>
+		<p>At Ernest Juchheim Web Development, we specialize in custom WordPress design and development, delivering visually impactful and highly functional websites that align with your brand's objectives.</p>
+		<h2>Reliable Web Hosting Services</h2>
+		<p>Keep your website operational and secure with our high-performance web hosting solutions. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
+		<h2 class="yellow_accent">Someone you can count on</h2>
+		<p>Reach out to me directly via text at <?php echo '662-897-8747'; ?> whenever you have any questions or to report an issue. I'm here to help whenever you need assistance.</p>
+		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
 
         <div id="portfolio"></div>
         <h1>Portfolio</h1>
@@ -64,7 +67,7 @@ get_header();
         <div class="tabs-container">
             <ul class="tabs">
                 <li class="tab active" data-tab="web-hosting">Web Hosting</li>
-                <li class="tab" data-tab="design-development">Design and Development</li>
+                <li class="tab" data-tab="design-development">Development</li>
                 <li class="tab" data-tab="custom">Custom</li>
             </ul>
             <div class="tab-content">
@@ -111,7 +114,7 @@ get_header();
                 <div class="content" id="custom">
                     <form id="custom-form">
 
-						<p class="custom-note">Choose this option if we've agreed to a price based on your unique needs.</p>
+						<p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
 
                         <label for="custom-name">Name:</label>
                         <input type="text" id="custom-name" name="name" required>
