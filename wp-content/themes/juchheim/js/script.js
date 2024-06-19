@@ -1,3 +1,4 @@
+console.log('script.js file loaded');
 document.addEventListener('DOMContentLoaded', () => {
     const tabsContainer = document.querySelector('.tabs');
     const contents = document.querySelectorAll('.content');

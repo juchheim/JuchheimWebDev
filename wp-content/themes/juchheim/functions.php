@@ -176,10 +176,6 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
-function enqueue_custom_scripts() {
-    wp_enqueue_script('custom-script', get_template_directory_uri() . '/js/script.js', array(), '1.0', true);
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 
 
 
@@ -193,13 +189,16 @@ function enqueue_custom_assets() {
 add_action('wp_enqueue_scripts', 'enqueue_custom_assets');
 
 
-function enqueue_stripe_scripts() {
+function enqueue_custom_scripts() {
+	wp_enqueue_script('custom-script', get_template_directory_uri() . '/js/script.js', array(), '1.0', true);
+
     // Enqueue Stripe.js
-    wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/');
+    wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', [], null, true);
+
     // Enqueue your custom stripe.js file
-    wp_enqueue_script('custom-stripe-js', get_template_directory_uri() . '/js/stripe.js', array('stripe-js'), null, true);
+    wp_enqueue_script('custom-stripe-js', get_template_directory_uri() . '/js/stripe.js', ['stripe-js'], null, true);
 }
-add_action('wp_enqueue_scripts', 'enqueue_stripe_scripts');
+add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 
 
 

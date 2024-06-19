@@ -1,3 +1,4 @@
+console.log('stripe.js file loaded');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('JavaScript loaded'); // Confirm JavaScript is loaded
 
