@@ -26,7 +26,7 @@ function stripe_integration_enqueue_scripts() {
     wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'stripe_nonce' => wp_create_nonce('stripe_nonce'),
-        'stripe_publishable_key' => 'pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5'
+        'stripe_publishable_key' => 'pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87'
     ));
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
@@ -153,7 +153,7 @@ function create_stripe_checkout_session() {
         ];
     }
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+    \Stripe\Stripe::setApiKey('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');
 
     try {
         // Create a Checkout Session
@@ -194,7 +194,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
+    $endpoint_secret = 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y';
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
