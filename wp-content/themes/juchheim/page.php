@@ -4,12 +4,22 @@ get_header();
 
 <div class="content-area">
     <main id="main" class="site-main">
-        <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
+        <div class="lead-in"><h1>Crafting Unique Web Experiences for Over 20 Years</h1></div>
 		<p>Ernest Juchheim Web Development specializes in custom WordPress design and development, delivering visually impactful and highly functional websites that align with your brand's objectives.</p>
-		<h2>Reliable Web Hosting Services</h2>
-		<p>Keep your website operational and secure with our high-performance web hosting solutions. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
-		<h2 class="yellow_accent">Someone you can count on</h2>
-		<p>Reach out to me directly via text at <?php echo '662-897-8747'; ?> whenever you have any questions or to report an issue. I'm here to help whenever you need assistance.</p>
+		<div class="services-container">
+            <div class="services-column">
+                <h2>Reliable Web Hosting Services</h2>
+                <p>Keep your website operational and secure with my high-performance web hosting solutions. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
+                <a href="#payments" class="btn-hosting">Sign Up Now</a>
+            </div>
+            <div class="services-column">
+                <h2 class="yellow_accent">Professional design and development</h2>
+                <p>I leverage years of experience in graphic design and web development to create custom WordPress themes and plugins. My expertise is in HTML, CSS, JavaScript, and PHP.</p>
+                <a href="#portfolio" class="btn-portfolio">View Portfolio</a>
+            </div>
+        </div>
+
+        <p style="padding-top:50px;">Know that you can reach me directly at <?php echo '662-897-8747'; ?> whenever you have any questions or to report an issue. I'm here to help whenever you need assistance.</p>
 		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
 
         <div id="portfolio"></div>
@@ -81,4 +91,19 @@ get_header();
 get_footer();
 ?>
 
+<script>
+document.querySelector('.btn-hosting').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector('#payments').scrollIntoView({
+        behavior: 'smooth'
+    });
+});
+
+document.querySelector('.btn-portfolio').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector('#portfolio').scrollIntoView({
+        behavior: 'smooth'
+    });
+});
+</script>
 
