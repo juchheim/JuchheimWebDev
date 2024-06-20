@@ -14,49 +14,20 @@ if ( ! defined( '_S_VERSION' ) ) {
 
 /**
  * Sets up theme defaults and registers support for various WordPress features.
- *
- * Note that this function is hooked into the after_setup_theme hook, which
- * runs before the init hook. The init hook is too late for some features, such
- * as indicating support for post thumbnails.
  */
 function juchheim_setup() {
-	/*
-		* Make theme available for translation.
-		* Translations can be filed in the /languages/ directory.
-		* If you're building a theme based on Juchheim, use a find and replace
-		* to change 'juchheim' to the name of your theme in all the template files.
-		*/
 	load_theme_textdomain( 'juchheim', get_template_directory() . '/languages' );
 
-	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
-
-	/*
-		* Let WordPress manage the document title.
-		* By adding theme support, we declare that this theme does not use a
-		* hard-coded <title> tag in the document head, and expect WordPress to
-		* provide it for us.
-		*/
 	add_theme_support( 'title-tag' );
-
-	/*
-		* Enable support for Post Thumbnails on posts and pages.
-		*
-		* @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
-		*/
 	add_theme_support( 'post-thumbnails' );
 
-	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus(
 		array(
 			'menu-1' => esc_html__( 'Primary', 'juchheim' ),
 		)
 	);
 
-	/*
-		* Switch default core markup for search form, comment form, and comments
-		* to output valid HTML5.
-		*/
 	add_theme_support(
 		'html5',
 		array(
@@ -70,7 +41,6 @@ function juchheim_setup() {
 		)
 	);
 
-	// Set up the WordPress core custom background feature.
 	add_theme_support(
 		'custom-background',
 		apply_filters(
@@ -82,14 +52,8 @@ function juchheim_setup() {
 		)
 	);
 
-	// Add theme support for selective refresh for widgets.
 	add_theme_support( 'customize-selective-refresh-widgets' );
 
-	/**
-	 * Add support for core custom logo.
-	 *
-	 * @link https://codex.wordpress.org/Theme_Logo
-	 */
 	add_theme_support(
 		'custom-logo',
 		array(
@@ -102,23 +66,11 @@ function juchheim_setup() {
 }
 add_action( 'after_setup_theme', 'juchheim_setup' );
 
-/**
- * Set the content width in pixels, based on the theme's design and stylesheet.
- *
- * Priority 0 to make it available to lower priority callbacks.
- *
- * @global int $content_width
- */
 function juchheim_content_width() {
 	$GLOBALS['content_width'] = apply_filters( 'juchheim_content_width', 640 );
 }
 add_action( 'after_setup_theme', 'juchheim_content_width', 0 );
 
-/**
- * Register widget area.
- *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
- */
 function juchheim_widgets_init() {
 	register_sidebar(
 		array(
@@ -134,9 +86,6 @@ function juchheim_widgets_init() {
 }
 add_action( 'widgets_init', 'juchheim_widgets_init' );
 
-/**
- * Enqueue scripts and styles.
- */
 function juchheim_scripts() {
 	wp_enqueue_style( 'juchheim-style', get_stylesheet_uri(), array(), _S_VERSION );
 	wp_style_add_data( 'juchheim-style', 'rtl', 'replace' );
@@ -146,6 +95,14 @@ function juchheim_scripts() {
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
+
+	wp_enqueue_script('custom-script', get_template_directory_uri() . '/js/script.js', array(), '1.0', true);
+
+	// Enqueue Stripe.js
+	wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', [], null, true);
+
+	// Enqueue your custom stripe.js file
+	wp_enqueue_script('custom-stripe-js', get_template_directory_uri() . '/js/stripe.js', ['stripe-js'], null, true);
 }
 add_action( 'wp_enqueue_scripts', 'juchheim_scripts' );
 
@@ -175,35 +132,6 @@ require get_template_directory() . '/inc/customizer.php';
 if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
-
-
-
-
-
-function enqueue_custom_assets() {
-    $script_url = get_template_directory_uri() . '/js/script.js';
-    error_log('Enqueuing script: ' . $script_url);
-
-    wp_enqueue_script('custom-script', $script_url, array(), '1.0', true);
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_assets');
-
-
-function enqueue_custom_scripts() {
-	wp_enqueue_script('custom-script', get_template_directory_uri() . '/js/script.js', array(), '1.0', true);
-
-    // Enqueue Stripe.js
-    wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', [], null, true);
-
-    // Enqueue your custom stripe.js file
-    wp_enqueue_script('custom-stripe-js', get_template_directory_uri() . '/js/stripe.js', ['stripe-js'], null, true);
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
-
-
-
-
-
 
 // Register custom REST API endpoint for handling checkout
 add_action('rest_api_init', function() {

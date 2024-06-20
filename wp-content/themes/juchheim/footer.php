@@ -4,5 +4,6 @@
     </div><!-- .site-info -->
 </footer><!-- #colophon -->
 </div><!-- end parallax -->
+<?php wp_footer(); ?>
 </body>
 </html>

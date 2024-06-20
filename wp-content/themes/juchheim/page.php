@@ -71,68 +71,7 @@ get_header();
                 <li class="tab" data-tab="custom">Custom</li>
             </ul>
             <div class="tab-content">
-                <div class="content active" id="web-hosting">
-					<form id="web-hosting-form" action="#" method="post">
-						<input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
-                        
-						<label for="name">Name:</label>
-                        <input type="text" id="name" name="name" required>
-                        
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
-                        
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required>
-                        
-                        <label for="plan">Choose your plan:</label>
-                        <select id="plan" name="plan">
-                            <option value="monthly">Monthly - $25</option>
-                            <option value="annually">Annually - $250</option>
-                        </select>
-                        
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
-                <div class="content" id="design-development">
-					<form id="development-form" action="#" method="post">
-                        <label for="dev-name">Name:</label>
-                        <input type="text" id="dev-name" name="name" required>
-                        
-                        <label for="dev-email">Email:</label>
-                        <input type="email" id="dev-email" name="email" required>
-                        
-                        <label for="dev-password">Password:</label>
-                        <input type="password" id="dev-password" name="password" required>
-                        
-                        <label for="dev-plan">Choose your plan:</label>
-                        <select id="dev-plan" name="plan">
-						<option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
-						<option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
-                        </select>
-                        
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
-                <div class="content" id="custom">
-					<form id="custom-form" action="#" method="post">
-
-						<p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
-
-                        <label for="custom-name">Name:</label>
-                        <input type="text" id="custom-name" name="name" required>
-                        
-                        <label for="custom-email">Email:</label>
-                        <input type="email" id="custom-email" name="email" required>
-                        
-                        <label for="custom-password">Password:</label>
-                        <input type="password" id="custom-password" name="password" required>
-                        
-                        <label for="custom-price">Price:</label>
-                        <input type="number" id="custom-price" name="price" required>
-                        
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
+				<?php echo do_shortcode('[stripe_integration_forms]'); ?>
             </div>
         </div>
     </main>
@@ -141,27 +80,5 @@ get_header();
 <?php
 get_footer();
 ?>
-<!-- Load Stripe.js from Stripe's CDN -->
-<script src="https://js.stripe.com/v3/"></script>
-<!-- Load your custom scripts -->
-<script src="<?php echo get_template_directory_uri(); ?>/js/script.js"></script>
-<script src="<?php echo get_template_directory_uri(); ?>/js/stripe.js"></script>
 
-<!-- Inline script to verify scripts are loaded -->
-<script>
-    console.log('Inline script executed');
-    const scriptTag = document.querySelector('script[src*="script.js"]');
-    if (scriptTag) {
-        console.log('script.js is enqueued:', scriptTag.src);
-    } else {
-        console.error('script.js is not enqueued');
-    }
-
-    const scriptTagStripe = document.querySelector('script[src*="stripe.js"]');
-    if (scriptTagStripe) {
-        console.log('stripe.js is enqueued:', scriptTagStripe.src);
-    } else {
-        console.error('stripe.js is not enqueued');
-    }
-</script>
 

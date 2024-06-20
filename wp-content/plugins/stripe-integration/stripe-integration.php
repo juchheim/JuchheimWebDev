@@ -1,0 +1,182 @@
+<?php
+/*
+Plugin Name: Stripe Integration
+Description: A plugin to integrate Stripe payments.
+Version: 1.0
+Author: Ernest Juchheim
+*/
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+// Include the Stripe PHP library
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+
+// Enqueue scripts and styles
+function stripe_integration_enqueue_scripts() {
+    if (!wp_script_is('stripe', 'enqueued')) {
+        wp_enqueue_script('stripe', 'https://js.stripe.com/v3/');
+    }
+
+    wp_enqueue_style('stripe-integration-style', plugin_dir_url(__FILE__) . 'assets/css/stripe-integration.css');
+    wp_enqueue_script('stripe-integration-script', plugin_dir_url(__FILE__) . 'assets/js/stripe-integration.js', array('jquery', 'stripe'), null, true);
+
+    // Localize script to pass data from PHP to JS
+    wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'stripe_nonce' => wp_create_nonce('stripe_nonce'),
+        'stripe_publishable_key' => 'pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5'
+    ));
+}
+add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
+
+// Shortcode to display forms
+function stripe_integration_display_forms() {
+    ob_start();
+    ?>
+    <div class="content active" id="web-hosting">
+        <form id="web-hosting-form">
+            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="plan">Choose your plan:</label>
+            <select id="plan" name="plan">
+                <option value="monthly">Monthly - $25</option>
+                <option value="annually">Annually - $250</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
+
+// Handle creating a Stripe Checkout Session
+function create_stripe_checkout_session() {
+    check_ajax_referer('stripe_nonce', 'nonce');
+
+    $form_data = $_POST['formData'];
+    parse_str($form_data, $form_array);
+
+    $name = sanitize_text_field($form_array['name']);
+    $email = sanitize_email($form_array['email']);
+    $password = sanitize_text_field($form_array['password']);
+    $plan = sanitize_text_field($form_array['plan']);
+    $price_id = ($plan === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
+
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+
+    try {
+        // Create a Checkout Session
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'customer_email' => $email,
+            'line_items' => [[
+                'price' => $price_id,
+                'quantity' => 1,
+            ]],
+            'mode' => 'subscription',
+            'success_url' => home_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
+            'cancel_url' => home_url('/checkout-cancelled/'),
+            'metadata' => [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+            ],
+        ]);
+
+        wp_send_json_success(['sessionId' => $session->id]);
+    } catch (\Stripe\Exception\ApiErrorException $e) {
+        wp_send_json_error(['message' => $e->getMessage()]);
+    }
+}
+add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
+add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
+
+// Register the webhook endpoint
+add_action('rest_api_init', function () {
+    register_rest_route('stripe/v1', '/webhook', array(
+        'methods' => 'POST',
+        'callback' => 'stripe_webhook_handler',
+        'permission_callback' => '__return_true', // Adjust permissions as needed
+    ));
+});
+
+// Webhook handler function
+function stripe_webhook_handler(WP_REST_Request $request) {
+    $payload = $request->get_body();
+    $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
+
+    try {
+        $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, $endpoint_secret
+        );
+    } catch (\UnexpectedValueException $e) {
+        // Invalid payload
+        return new WP_Error('invalid_payload', 'Invalid payload', array('status' => 400));
+    } catch (\Stripe\Exception\SignatureVerificationException $e) {
+        // Invalid signature
+        return new WP_Error('invalid_signature', 'Invalid signature', array('status' => 400));
+    }
+
+    // Handle the event
+    switch ($event->type) {
+        case 'checkout.session.completed':
+            $session = $event->data->object;
+            handle_checkout_session_completed($session);
+            break;
+        default:
+            // Unexpected event type
+            return new WP_Error('unexpected_event', 'Unexpected event type', array('status' => 400));
+    }
+
+    return new WP_REST_Response('Webhook received', 200);
+}
+
+// Function to handle successful checkout session
+function handle_checkout_session_completed($session) {
+    // Extract relevant information from $session
+    $customer_id = $session->customer;
+    $metadata = $session->metadata;
+
+    $name = $metadata->name;
+    $email = $metadata->email;
+    $password = $metadata->password;
+
+    // Check if the user already exists
+    if (!email_exists($email)) {
+        // Create a new user
+        $user_id = wp_create_user($email, $password, $email);
+
+        if (!is_wp_error($user_id)) {
+            // Update user metadata with additional information
+            update_user_meta($user_id, 'customer_id', $customer_id);
+            // Optionally update other user details, such as the display name
+            wp_update_user([
+                'ID' => $user_id,
+                'display_name' => $name,
+                'first_name' => $name, // Split name if necessary
+            ]);
+
+            // Optionally send a confirmation email to the new user
+            wp_new_user_notification($user_id, null, 'both');
+        } else {
+            error_log('User creation failed: ' . $user_id->get_error_message());
+        }
+    } else {
+        // User already exists, update user details or log an error
+        error_log('User with email ' . $email . ' already exists.');
+    }
+}
