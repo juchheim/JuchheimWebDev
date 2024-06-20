@@ -31,28 +31,39 @@ jQuery(document).ready(function ($) {
 jQuery(document).ready(function ($) {
     var stripe = Stripe(stripeIntegration.stripe_publishable_key);
 
-    $('#web-hosting-form').on('submit', function (e) {
-        e.preventDefault();
+    // Function to handle form submission
+    function handleFormSubmit(formId, plan, priceId) {
+        $('#' + formId).on('submit', function (e) {
+            e.preventDefault();
 
-        var form = $(this);
-        var formData = form.serialize();
+            var form = $(this);
+            var formData = form.serialize();
 
-        $.ajax({
-            type: 'POST',
-            url: stripeIntegration.ajax_url,
-            data: {
-                action: 'create_stripe_checkout_session',
-                nonce: stripeIntegration.stripe_nonce,
-                formData: formData,
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Redirect to Stripe Checkout
-                    return stripe.redirectToCheckout({ sessionId: response.data.sessionId });
-                } else {
-                    alert('Error: ' + response.data.message);
+            $.ajax({
+                type: 'POST',
+                url: stripeIntegration.ajax_url,
+                data: {
+                    action: 'create_stripe_checkout_session',
+                    nonce: stripeIntegration.stripe_nonce,
+                    formData: formData,
+                    plan: plan,
+                    price_id: priceId,
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Redirect to Stripe Checkout
+                        return stripe.redirectToCheckout({ sessionId: response.data.sessionId });
+                    } else {
+                        alert('Error: ' + response.data.message);
+                    }
                 }
-            }
+            });
         });
-    });
+    }
+
+    // Handle form submissions for each form
+    handleFormSubmit('web-hosting-form', 'hosting', '');
+    handleFormSubmit('development-form', 'development', '');
+    handleFormSubmit('custom-form', 'custom', '');
 });
+

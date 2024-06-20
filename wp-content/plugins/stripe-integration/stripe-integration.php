@@ -31,7 +31,6 @@ function stripe_integration_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
 
-// Shortcode to display forms
 function stripe_integration_display_forms() {
     ob_start();
     ?>
@@ -57,10 +56,54 @@ function stripe_integration_display_forms() {
             <button type="submit">Submit</button>
         </form>
     </div>
+    <div class="content" id="design-development">
+        <form id="development-form">
+            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+
+            <label for="dev-name">Name:</label>
+            <input type="text" id="dev-name" name="name" required>
+
+            <label for="dev-email">Email:</label>
+            <input type="email" id="dev-email" name="email" required>
+
+            <label for="dev-password">Password:</label>
+            <input type="password" id="dev-password" name="password" required>
+
+            <label for="dev-plan">Choose your plan:</label>
+            <select id="dev-plan" name="plan">
+                <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
+                <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="content" id="custom">
+        <form id="custom-form">
+            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+
+            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
+
+            <label for="custom-name">Name:</label>
+            <input type="text" id="custom-name" name="name" required>
+
+            <label for="custom-email">Email:</label>
+            <input type="email" id="custom-email" name="email" required>
+
+            <label for="custom-password">Password:</label>
+            <input type="password" id="custom-password" name="password" required>
+
+            <label for="custom-price">Price:</label>
+            <input type="number" id="custom-price" name="price" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
     <?php
     return ob_get_clean();
 }
 add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
+
 
 // Handle creating a Stripe Checkout Session
 function create_stripe_checkout_session() {
@@ -73,7 +116,20 @@ function create_stripe_checkout_session() {
     $email = sanitize_email($form_array['email']);
     $password = sanitize_text_field($form_array['password']);
     $plan = sanitize_text_field($form_array['plan']);
-    $price_id = ($plan === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
+    $price_id = '';
+
+    // Determine the price ID based on the plan and form
+    if ($plan === 'monthly') {
+        $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc';
+    } elseif ($plan === 'annually') {
+        $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM';
+    } elseif ($plan === '10-page-no-sub') {
+        $price_id = 'price_10pageno';
+    } elseif ($plan === '10-page-with-sub') {
+        $price_id = 'price_10pagewithsub';
+    } else {
+        $price_id = sanitize_text_field($form_array['price']);
+    }
 
     \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
@@ -104,6 +160,7 @@ function create_stripe_checkout_session() {
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
 
+
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
@@ -119,15 +176,20 @@ function stripe_webhook_handler(WP_REST_Request $request) {
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
     $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
 
+    // Log the payload for debugging
+    error_log('Stripe Webhook Payload: ' . $payload);
+
     try {
         $event = \Stripe\Webhook::constructEvent(
             $payload, $sig_header, $endpoint_secret
         );
     } catch (\UnexpectedValueException $e) {
         // Invalid payload
+        error_log('Invalid Payload: ' . $e->getMessage());
         return new WP_Error('invalid_payload', 'Invalid payload', array('status' => 400));
     } catch (\Stripe\Exception\SignatureVerificationException $e) {
         // Invalid signature
+        error_log('Invalid Signature: ' . $e->getMessage());
         return new WP_Error('invalid_signature', 'Invalid signature', array('status' => 400));
     }
 
@@ -139,14 +201,19 @@ function stripe_webhook_handler(WP_REST_Request $request) {
             break;
         default:
             // Unexpected event type
+            error_log('Unexpected Event Type: ' . $event->type);
             return new WP_Error('unexpected_event', 'Unexpected event type', array('status' => 400));
     }
 
     return new WP_REST_Response('Webhook received', 200);
 }
 
+
 // Function to handle successful checkout session
 function handle_checkout_session_completed($session) {
+    // Log the session object for debugging
+    error_log('Stripe Checkout Session: ' . print_r($session, true));
+
     // Extract relevant information from $session
     $customer_id = $session->customer;
     $metadata = $session->metadata;
