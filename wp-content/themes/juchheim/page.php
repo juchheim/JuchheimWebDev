@@ -5,7 +5,7 @@ get_header();
 <div class="content-area">
     <main id="main" class="site-main">
         <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
-		<p>At Ernest Juchheim Web Development, we specialize in custom WordPress design and development, delivering visually impactful and highly functional websites that align with your brand's objectives.</p>
+		<p>Ernest Juchheim Web Development specializes in custom WordPress design and development, delivering visually impactful and highly functional websites that align with your brand's objectives.</p>
 		<h2>Reliable Web Hosting Services</h2>
 		<p>Keep your website operational and secure with our high-performance web hosting solutions. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
 		<h2 class="yellow_accent">Someone you can count on</h2>
