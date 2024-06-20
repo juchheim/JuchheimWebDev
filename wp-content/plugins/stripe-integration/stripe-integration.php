@@ -118,17 +118,39 @@ function create_stripe_checkout_session() {
     $plan = sanitize_text_field($form_array['plan']);
     $price_id = '';
 
+    $mode = 'payment'; // Default to one-time payment
+    $line_items = [];
+
     // Determine the price ID based on the plan and form
     if ($plan === 'monthly') {
-        $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc';
+        $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc'; // Update with your actual price ID for monthly plan
+        $mode = 'subscription';
     } elseif ($plan === 'annually') {
-        $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM';
+        $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Update with your actual price ID for annual plan
+        $mode = 'subscription';
     } elseif ($plan === '10-page-no-sub') {
-        $price_id = 'price_10pageno';
+        $price_id = 'price_1PTnmnHrZfxkHCcnBjcSLQad'; // Update with your actual price ID for 10-page-no-sub plan
     } elseif ($plan === '10-page-with-sub') {
-        $price_id = 'price_10pagewithsub';
+        $price_id = 'price_1PTnnKHrZfxkHCcnZ8k8UCcE'; // Update with your actual price ID for 10-page-with-sub plan
     } else {
-        $price_id = sanitize_text_field($form_array['price']);
+        $price = sanitize_text_field($form_array['price']);
+        $line_items[] = [
+            'price_data' => [
+                'currency' => 'usd',
+                'product_data' => [
+                    'name' => 'Custom Service',
+                ],
+                'unit_amount' => $price * 100, // Convert to cents
+            ],
+            'quantity' => 1,
+        ];
+    }
+
+    if (empty($line_items)) {
+        $line_items[] = [
+            'price' => $price_id,
+            'quantity' => 1,
+        ];
     }
 
     \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
@@ -138,11 +160,8 @@ function create_stripe_checkout_session() {
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'customer_email' => $email,
-            'line_items' => [[
-                'price' => $price_id,
-                'quantity' => 1,
-            ]],
-            'mode' => 'subscription',
+            'line_items' => $line_items,
+            'mode' => $mode,
             'success_url' => home_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
             'cancel_url' => home_url('/checkout-cancelled/'),
             'metadata' => [
@@ -159,6 +178,7 @@ function create_stripe_checkout_session() {
 }
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
+
 
 
 // Register the webhook endpoint
