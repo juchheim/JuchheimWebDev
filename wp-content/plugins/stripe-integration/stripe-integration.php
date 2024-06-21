@@ -194,7 +194,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
+    $endpoint_secret = 'whsec_kNP7kmke4yorjL837t5vybbFzFjyxXSx';
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
