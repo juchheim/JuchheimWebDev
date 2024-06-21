@@ -21,7 +21,9 @@ jQuery(document).ready(function($) {
                     stripe.redirectToCheckout({
                         sessionId: response.data.sessionId
                     }).then(function(result) {
-                        console.error(result.error.message);
+                        if (result.error) {
+                            console.error(result.error.message);
+                        }
                     });
                 } else {
                     console.error(response.data.message);

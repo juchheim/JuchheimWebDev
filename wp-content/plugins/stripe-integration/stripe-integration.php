@@ -22,14 +22,19 @@ function stripe_integration_enqueue_scripts() {
     wp_enqueue_style('stripe-integration-style', plugin_dir_url(__FILE__) . 'assets/css/stripe-integration.css');
     wp_enqueue_script('stripe-integration-script', plugin_dir_url(__FILE__) . 'assets/js/stripe-integration.js', array('jquery', 'stripe'), null, true);
 
+    // Log the publishable key to debug
+    $publishable_key = 'pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87';
+    error_log('Stripe Publishable Key: ' . $publishable_key);
+
     // Localize script to pass data from PHP to JS
     wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'stripe_nonce' => wp_create_nonce('stripe_nonce'),
-        'stripe_publishable_key' => 'pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87'
+        'stripe_publishable_key' => $publishable_key
     ));
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
+
 
 function stripe_integration_display_forms() {
     ob_start();
