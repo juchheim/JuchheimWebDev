@@ -101,7 +101,7 @@ add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_s
 // Handle Stripe webhook
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
-        'methods' => 'POST',
+        'methods' => WP_REST_Server::CREATABLE,
         'callback' => 'juchheim_stripe_webhook_handler',
     ));
 });
