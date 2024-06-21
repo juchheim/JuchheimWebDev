@@ -41,51 +41,57 @@ function juchheim_payment_forms_shortcode() {
             </select>
 
             <button type="submit">Submit</button>
+            <input type="hidden" name="action" value="create_checkout_session">
         </form>
     </div>
-    <div class="content" id="design-development">
-        <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
-            <label for="dev-name">Name:</label>
-            <input type="text" id="dev-name" name="name" required>
+<div class="content" id="design-development">
+    <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
+        <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
-            <label for="dev-email">Email:</label>
-            <input type="email" id="dev-email" name="email" required>
+        <label for="dev-name">Name:</label>
+        <input type="text" id="dev-name" name="name" required>
 
-            <label for="dev-password">Password:</label>
-            <input type="password" id="dev-password" name="password" required>
+        <label for="dev-email">Email:</label>
+        <input type="email" id="dev-email" name="email" required>
 
-            <label for="dev-plan">Choose your plan:</label>
-            <select id="dev-plan" name="plan">
-                <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
-                <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
-            </select>
+        <label for="dev-password">Password:</label>
+        <input type="password" id="dev-password" name="password" required>
 
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-    <div class="content" id="custom" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-        <form id="custom-form">
-            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+        <label for="dev-plan">Choose your plan:</label>
+        <select id="dev-plan" name="plan">
+            <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
+            <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
+        </select>
 
-            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
+        <button type="submit">Submit</button>
+        <input type="hidden" name="action" value="create_checkout_session">
+    </form>
+</div>
 
-            <label for="custom-name">Name:</label>
-            <input type="text" id="custom-name" name="name" required>
+<div class="content" id="custom">
+    <form id="custom-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
+        <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
-            <label for="custom-email">Email:</label>
-            <input type="email" id="custom-email" name="email" required>
+        <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
 
-            <label for="custom-password">Password:</label>
-            <input type="password" id="custom-password" name="password" required>
+        <label for="custom-name">Name:</label>
+        <input type="text" id="custom-name" name="name" required>
 
-            <label for="custom-price">Price:</label>
-            <input type="number" id="custom-price" name="price" required>
+        <label for="custom-email">Email:</label>
+        <input type="email" id="custom-email" name="email" required>
 
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+        <label for="custom-password">Password:</label>
+        <input type="password" id="custom-password" name="password" required>
+
+        <label for="custom-price">Price:</label>
+        <input type="number" id="custom-price" name="price" required>
+
+        <button type="submit">Submit</button>
+        <input type="hidden" name="action" value="create_checkout_session">
+    </form>
+</div>
+
     <?php
     return ob_get_clean();
 }
