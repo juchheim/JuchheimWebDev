@@ -19,7 +19,8 @@ get_header();
             </div>
         </div>
 
-        <p style="padding-top:50px;">Know that you can reach me directly at <?php echo '662-897-8747'; ?> whenever you have any questions or to report an issue. I'm here to help whenever you need assistance.</p>
+        <h3>Know that you can reach me directly at <?php echo '662-897-8747'; ?> when you have a question or to report an issue.</h3>
+        <h5>I'm here to help <em>whenever</em> you need assistance.</h5>
 		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
 
         <div id="portfolio"></div>

@@ -1087,7 +1087,7 @@ body {
 	color: white;
 	text-align: center;
 	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
-	margin-top:50px;
+	margin-top:70px;
 }
 
 .site-main p {
@@ -1368,6 +1368,24 @@ form button:active {
 
 .lead-in h1 {
 	margin-top:20px;
+}
+
+h3 {
+	font-size: 22px;
+	text-align: center;
+	color: white;
+	padding: 100px 0 0 0;
+	margin:0;
+	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
+}
+
+h5 {
+	text-align: center;
+	color: white;
+	font-size:42px;
+	padding: 10px 0 50px 0;
+	margin:0;
+	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
 }
 
 
