@@ -98,9 +98,7 @@ function juchheim_create_checkout_session() {
 add_action('wp_ajax_create_checkout_session', 'juchheim_create_checkout_session');
 add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_session');
 
-
-
-
+// Handle Stripe webhook
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
         'methods' => 'POST',
