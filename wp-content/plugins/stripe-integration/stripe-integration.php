@@ -183,7 +183,7 @@ add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_check
 
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
-    register_rest_route('stripe/v1', '/webhook', array(
+    register_rest_route('wpmm/v1', '/stripe-webhook', array(
         'methods' => 'POST',
         'callback' => 'stripe_webhook_handler',
         'permission_callback' => '__return_true', // Adjust permissions as needed
@@ -194,7 +194,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_kNP7kmke4yorjL837t5vybbFzFjyxXSx';
+    $endpoint_secret = getenv('STRIPE_WEBHOOK_SECRET');
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
@@ -227,7 +227,6 @@ function stripe_webhook_handler(WP_REST_Request $request) {
 
     return new WP_REST_Response('Webhook received', 200);
 }
-
 
 // Function to handle successful checkout session
 function handle_checkout_session_completed($session) {
@@ -267,3 +266,4 @@ function handle_checkout_session_completed($session) {
         error_log('User with email ' . $email . ' already exists.');
     }
 }
+
