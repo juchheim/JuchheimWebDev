@@ -10,8 +10,11 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-// Include the Stripe PHP library
 require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+
+// Load environment variables from .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 // Enqueue scripts and styles
 function stripe_integration_enqueue_scripts() {
@@ -26,7 +29,7 @@ function stripe_integration_enqueue_scripts() {
     wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'stripe_nonce' => wp_create_nonce('stripe_nonce'),
-        'stripe_publishable_key' => 'pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5'
+        'stripe_publishable_key' => getenv('STRIPE_PUBLISHABLE_KEY')
     ));
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
@@ -153,7 +156,7 @@ function create_stripe_checkout_session() {
         ];
     }
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+    \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
     try {
         // Create a Checkout Session
@@ -179,8 +182,6 @@ function create_stripe_checkout_session() {
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
 
-
-
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
@@ -194,7 +195,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
+    $endpoint_secret = getenv('STRIPE_WEBHOOK_SECRET');
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
@@ -227,7 +228,6 @@ function stripe_webhook_handler(WP_REST_Request $request) {
 
     return new WP_REST_Response('Webhook received', 200);
 }
-
 
 // Function to handle successful checkout session
 function handle_checkout_session_completed($session) {
