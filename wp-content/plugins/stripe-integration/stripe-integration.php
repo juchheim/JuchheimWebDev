@@ -22,19 +22,14 @@ function stripe_integration_enqueue_scripts() {
     wp_enqueue_style('stripe-integration-style', plugin_dir_url(__FILE__) . 'assets/css/stripe-integration.css');
     wp_enqueue_script('stripe-integration-script', plugin_dir_url(__FILE__) . 'assets/js/stripe-integration.js', array('jquery', 'stripe'), null, true);
 
-    // Log the publishable key to debug
-    $publishable_key = 'pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87';
-    error_log('Stripe Publishable Key: ' . $publishable_key);
-
     // Localize script to pass data from PHP to JS
     wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'stripe_nonce' => wp_create_nonce('stripe_nonce'),
-        'stripe_publishable_key' => $publishable_key
+        'stripe_publishable_key' => 'pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87'
     ));
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
-
 
 function stripe_integration_display_forms() {
     ob_start();
@@ -109,14 +104,10 @@ function stripe_integration_display_forms() {
 }
 add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
 
+
 // Handle creating a Stripe Checkout Session
 function create_stripe_checkout_session() {
     check_ajax_referer('stripe_nonce', 'nonce');
-
-    if (!isset($_POST['formData'])) {
-        wp_send_json_error(['message' => 'No form data received']);
-        return;
-    }
 
     $form_data = $_POST['formData'];
     parse_str($form_data, $form_array);
@@ -132,15 +123,15 @@ function create_stripe_checkout_session() {
 
     // Determine the price ID based on the plan and form
     if ($plan === 'monthly') {
-        $price_id = 'price_1PTpZBHrZfxkHCcnbQRzh5rL'; // Update with your actual price ID for monthly plan
+        $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc'; // Update with your actual price ID for monthly plan
         $mode = 'subscription';
     } elseif ($plan === 'annually') {
-        $price_id = 'price_1PTpZoHrZfxkHCcnmwDV0mXm'; // Update with your actual price ID for annual plan
+        $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Update with your actual price ID for annual plan
         $mode = 'subscription';
     } elseif ($plan === '10-page-no-sub') {
-        $price_id = 'price_1PTq1QHrZfxkHCcnjMmehUOX'; // Update with your actual price ID for 10-page-no-sub plan
+        $price_id = 'price_1PTnmnHrZfxkHCcnBjcSLQad'; // Update with your actual price ID for 10-page-no-sub plan
     } elseif ($plan === '10-page-with-sub') {
-        $price_id = 'price_1PTpbmHrZfxkHCcnkCPJz1ce'; // Update with your actual price ID for 10-page-with-sub plan
+        $price_id = 'price_1PTnnKHrZfxkHCcnZ8k8UCcE'; // Update with your actual price ID for 10-page-with-sub plan
     } else {
         $price = sanitize_text_field($form_array['price']);
         $line_items[] = [
@@ -165,6 +156,7 @@ function create_stripe_checkout_session() {
     \Stripe\Stripe::setApiKey('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');
 
     try {
+        // Create a Checkout Session
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'customer_email' => $email,
@@ -178,6 +170,7 @@ function create_stripe_checkout_session() {
                 'password' => $password,
             ],
         ]);
+
         wp_send_json_success(['sessionId' => $session->id]);
     } catch (\Stripe\Exception\ApiErrorException $e) {
         wp_send_json_error(['message' => $e->getMessage()]);
@@ -186,9 +179,11 @@ function create_stripe_checkout_session() {
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
 
+
+
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
-    register_rest_route('wpmm/v1', '/stripe-webhook', array(
+    register_rest_route('stripe/v1', '/webhook', array(
         'methods' => 'POST',
         'callback' => 'stripe_webhook_handler',
         'permission_callback' => '__return_true', // Adjust permissions as needed
@@ -208,7 +203,6 @@ function stripe_webhook_handler(WP_REST_Request $request) {
         $event = \Stripe\Webhook::constructEvent(
             $payload, $sig_header, $endpoint_secret
         );
-        error_log('Stripe Webhook Event: ' . print_r($event, true));
     } catch (\UnexpectedValueException $e) {
         // Invalid payload
         error_log('Invalid Payload: ' . $e->getMessage());
@@ -223,7 +217,6 @@ function stripe_webhook_handler(WP_REST_Request $request) {
     switch ($event->type) {
         case 'checkout.session.completed':
             $session = $event->data->object;
-            error_log('Checkout Session: ' . print_r($session, true));
             handle_checkout_session_completed($session);
             break;
         default:
@@ -235,6 +228,7 @@ function stripe_webhook_handler(WP_REST_Request $request) {
     return new WP_REST_Response('Webhook received', 200);
 }
 
+
 // Function to handle successful checkout session
 function handle_checkout_session_completed($session) {
     // Log the session object for debugging
@@ -244,16 +238,9 @@ function handle_checkout_session_completed($session) {
     $customer_id = $session->customer;
     $metadata = $session->metadata;
 
-    if (!isset($metadata->name) || !isset($metadata->email) || !isset($metadata->password)) {
-        error_log('Missing metadata in Stripe session: ' . print_r($metadata, true));
-        return;
-    }
-
-    $name = sanitize_text_field($metadata->name);
-    $email = sanitize_email($metadata->email);
-    $password = sanitize_text_field($metadata->password);
-
-    error_log("Extracted metadata - Name: $name, Email: $email");
+    $name = $metadata->name;
+    $email = $metadata->email;
+    $password = $metadata->password;
 
     // Check if the user already exists
     if (!email_exists($email)) {
@@ -261,7 +248,6 @@ function handle_checkout_session_completed($session) {
         $user_id = wp_create_user($email, $password, $email);
 
         if (!is_wp_error($user_id)) {
-            error_log("User created successfully - User ID: $user_id");
             // Update user metadata with additional information
             update_user_meta($user_id, 'customer_id', $customer_id);
             // Optionally update other user details, such as the display name
