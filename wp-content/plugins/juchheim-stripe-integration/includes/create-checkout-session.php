@@ -4,7 +4,10 @@ require plugin_dir_path(__FILE__) . '../vendor/autoload.php';
 \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    check_ajax_referer('stripe_nonce', 'stripe_nonce');
+    if (!isset($_POST['stripe_nonce']) || !wp_verify_nonce($_POST['stripe_nonce'], 'stripe_nonce')) {
+        wp_send_json_error('Invalid nonce');
+        exit;
+    }
 
     $name = sanitize_text_field($_POST['name']);
     $email = sanitize_email($_POST['email']);

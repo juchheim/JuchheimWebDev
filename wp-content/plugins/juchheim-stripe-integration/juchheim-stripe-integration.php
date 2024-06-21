@@ -98,7 +98,6 @@ function juchheim_create_checkout_session() {
 add_action('wp_ajax_create_checkout_session', 'juchheim_create_checkout_session');
 add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_session');
 
-// Handle Stripe webhook
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
         'methods' => WP_REST_Server::CREATABLE,
@@ -109,7 +108,7 @@ add_action('rest_api_init', function () {
 function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
+    $endpoint_secret = 'YOUR_STRIPE_ENDPOINT_SECRET';
 
     $event = null;
 
@@ -118,29 +117,37 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
             $payload, $sig_header, $endpoint_secret
         );
     } catch (\UnexpectedValueException $e) {
-        // Invalid payload
+        error_log('Invalid payload: ' . $e->getMessage());
         return new WP_Error('invalid_payload', 'Invalid Payload', array('status' => 400));
     } catch (\Stripe\Exception\SignatureVerificationException $e) {
-        // Invalid signature
+        error_log('Invalid signature: ' . $e->getMessage());
         return new WP_Error('invalid_signature', 'Invalid Signature', array('status' => 400));
     }
 
-    if ($event->type == 'checkout.session.completed') {
-        $session = $event->data->object;
+    if ($event->type == 'payment_intent.succeeded') {
+        $payment_intent = $event->data->object;
+        $metadata = $payment_intent->metadata;
 
         // Retrieve session details
-        $metadata = $session->metadata;
         $email = $metadata->email;
         $password = $metadata->password;
         $name = $metadata->name;
 
-        // Create WordPress user
-        $user_id = wp_create_user($email, $password, $email);
-        wp_update_user([
-            'ID' => $user_id,
-            'display_name' => $name,
-            'role' => 'subscriber'
-        ]);
+        if (!email_exists($email)) {
+            // Create WordPress user
+            $user_id = wp_create_user($email, $password, $email);
+            wp_update_user([
+                'ID' => $user_id,
+                'display_name' => $name,
+                'role' => 'subscriber'
+            ]);
+
+            error_log('User created: ' . $email);
+        } else {
+            error_log('User already exists: ' . $email);
+        }
+    } else {
+        error_log('Unhandled event type: ' . $event->type);
     }
 
     return new WP_REST_Response('Webhook Handled', 200);
