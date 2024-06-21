@@ -156,7 +156,6 @@ function create_stripe_checkout_session() {
     \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
     try {
-        // Create a Checkout Session
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'customer_email' => $email,
@@ -170,7 +169,6 @@ function create_stripe_checkout_session() {
                 'password' => $password,
             ],
         ]);
-
         wp_send_json_success(['sessionId' => $session->id]);
     } catch (\Stripe\Exception\ApiErrorException $e) {
         wp_send_json_error(['message' => $e->getMessage()]);
@@ -203,6 +201,7 @@ function stripe_webhook_handler(WP_REST_Request $request) {
         $event = \Stripe\Webhook::constructEvent(
             $payload, $sig_header, $endpoint_secret
         );
+        error_log('Stripe Webhook Event: ' . print_r($event, true));
     } catch (\UnexpectedValueException $e) {
         // Invalid payload
         error_log('Invalid Payload: ' . $e->getMessage());
@@ -217,6 +216,7 @@ function stripe_webhook_handler(WP_REST_Request $request) {
     switch ($event->type) {
         case 'checkout.session.completed':
             $session = $event->data->object;
+            error_log('Checkout Session: ' . print_r($session, true));
             handle_checkout_session_completed($session);
             break;
         default:
@@ -237,9 +237,16 @@ function handle_checkout_session_completed($session) {
     $customer_id = $session->customer;
     $metadata = $session->metadata;
 
-    $name = $metadata->name;
-    $email = $metadata->email;
-    $password = $metadata->password;
+    if (!isset($metadata->name) || !isset($metadata->email) || !isset($metadata->password)) {
+        error_log('Missing metadata in Stripe session: ' . print_r($metadata, true));
+        return;
+    }
+
+    $name = sanitize_text_field($metadata->name);
+    $email = sanitize_email($metadata->email);
+    $password = sanitize_text_field($metadata->password);
+
+    error_log("Extracted metadata - Name: $name, Email: $email");
 
     // Check if the user already exists
     if (!email_exists($email)) {
@@ -247,6 +254,7 @@ function handle_checkout_session_completed($session) {
         $user_id = wp_create_user($email, $password, $email);
 
         if (!is_wp_error($user_id)) {
+            error_log("User created successfully - User ID: $user_id");
             // Update user metadata with additional information
             update_user_meta($user_id, 'customer_id', $customer_id);
             // Optionally update other user details, such as the display name
@@ -266,4 +274,5 @@ function handle_checkout_session_completed($session) {
         error_log('User with email ' . $email . ' already exists.');
     }
 }
+
 
