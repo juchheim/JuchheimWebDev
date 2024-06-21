@@ -6,30 +6,12 @@ Version: 1.0
 Author: Ernest Juchheim
 */
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+// Include the Stripe PHP library
 require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
-
-// Load environment variables from .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-// Debugging: Log environment variables
-error_log('STRIPE_PUBLISHABLE_KEY: ' . getenv('STRIPE_PUBLISHABLE_KEY'));
-error_log('STRIPE_SECRET_KEY: ' . getenv('STRIPE_SECRET_KEY'));
-error_log('STRIPE_WEBHOOK_SECRET: ' . getenv('STRIPE_WEBHOOK_SECRET'));
-
-// Ensure environment variables are set
-if (!getenv('STRIPE_PUBLISHABLE_KEY') || !getenv('STRIPE_SECRET_KEY') || !getenv('STRIPE_WEBHOOK_SECRET')) {
-    error_log('Environment variables are not set properly.');
-    die('Environment variables are not set properly.');
-}
 
 // Enqueue scripts and styles
 function stripe_integration_enqueue_scripts() {
@@ -44,7 +26,7 @@ function stripe_integration_enqueue_scripts() {
     wp_localize_script('stripe-integration-script', 'stripeIntegration', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'stripe_nonce' => wp_create_nonce('stripe_nonce'),
-        'stripe_publishable_key' => getenv('STRIPE_PUBLISHABLE_KEY')
+        'stripe_publishable_key' => 'pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5'
     ));
 }
 add_action('wp_enqueue_scripts', 'stripe_integration_enqueue_scripts');
@@ -122,6 +104,7 @@ function stripe_integration_display_forms() {
 }
 add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
 
+
 // Handle creating a Stripe Checkout Session
 function create_stripe_checkout_session() {
     check_ajax_referer('stripe_nonce', 'nonce');
@@ -170,7 +153,7 @@ function create_stripe_checkout_session() {
         ];
     }
 
-    \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
     try {
         // Create a Checkout Session
@@ -196,6 +179,8 @@ function create_stripe_checkout_session() {
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
 
+
+
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
@@ -209,7 +194,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = getenv('STRIPE_WEBHOOK_SECRET');
+    $endpoint_secret = 'whsec_1zqdBkrvY225jlDKtOrQChjPuYacs700';
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
@@ -242,6 +227,7 @@ function stripe_webhook_handler(WP_REST_Request $request) {
 
     return new WP_REST_Response('Webhook received', 200);
 }
+
 
 // Function to handle successful checkout session
 function handle_checkout_session_completed($session) {
