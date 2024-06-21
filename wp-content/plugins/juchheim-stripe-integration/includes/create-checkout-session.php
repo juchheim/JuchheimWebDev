@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
+            'customer_email' => $email, // Pass the email address to Stripe
             'success_url' => home_url('/payment-success?session_id={CHECKOUT_SESSION_ID}'),
             'cancel_url' => home_url('/payment-failed'),
             'metadata' => [
