@@ -20,6 +20,11 @@ require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+// Debugging: Log environment variables
+error_log('STRIPE_PUBLISHABLE_KEY: ' . getenv('STRIPE_PUBLISHABLE_KEY'));
+error_log('STRIPE_SECRET_KEY: ' . getenv('STRIPE_SECRET_KEY'));
+error_log('STRIPE_WEBHOOK_SECRET: ' . getenv('STRIPE_WEBHOOK_SECRET'));
+
 // Ensure environment variables are set
 if (!getenv('STRIPE_PUBLISHABLE_KEY') || !getenv('STRIPE_SECRET_KEY') || !getenv('STRIPE_WEBHOOK_SECRET')) {
     error_log('Environment variables are not set properly.');
