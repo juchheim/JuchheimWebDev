@@ -22,7 +22,7 @@ function juchheim_payment_forms_shortcode() {
     ob_start();
     ?>
     <div class="content active" id="web-hosting">
-        <form id="web-hosting-form">
+        <form id="web-hosting-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
             <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
             <label for="name">Name:</label>
@@ -44,7 +44,7 @@ function juchheim_payment_forms_shortcode() {
         </form>
     </div>
     <div class="content" id="design-development">
-        <form id="development-form">
+        <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
             <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
             <label for="dev-name">Name:</label>
@@ -65,7 +65,7 @@ function juchheim_payment_forms_shortcode() {
             <button type="submit">Submit</button>
         </form>
     </div>
-    <div class="content" id="custom">
+    <div class="content" id="custom" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
         <form id="custom-form">
             <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
