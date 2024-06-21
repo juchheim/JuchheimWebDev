@@ -6,6 +6,10 @@ Version: 1.0
 Author: Ernest Juchheim
 */
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -15,6 +19,12 @@ require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 // Load environment variables from .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
+
+// Ensure environment variables are set
+if (!getenv('STRIPE_PUBLISHABLE_KEY') || !getenv('STRIPE_SECRET_KEY') || !getenv('STRIPE_WEBHOOK_SECRET')) {
+    error_log('Environment variables are not set properly.');
+    die('Environment variables are not set properly.');
+}
 
 // Enqueue scripts and styles
 function stripe_integration_enqueue_scripts() {
@@ -106,7 +116,6 @@ function stripe_integration_display_forms() {
     return ob_get_clean();
 }
 add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
-
 
 // Handle creating a Stripe Checkout Session
 function create_stripe_checkout_session() {
