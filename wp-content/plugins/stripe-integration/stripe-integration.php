@@ -104,10 +104,14 @@ function stripe_integration_display_forms() {
 }
 add_shortcode('stripe_integration_forms', 'stripe_integration_display_forms');
 
-
 // Handle creating a Stripe Checkout Session
 function create_stripe_checkout_session() {
     check_ajax_referer('stripe_nonce', 'nonce');
+
+    if (!isset($_POST['formData'])) {
+        wp_send_json_error(['message' => 'No form data received']);
+        return;
+    }
 
     $form_data = $_POST['formData'];
     parse_str($form_data, $form_array);
@@ -123,15 +127,15 @@ function create_stripe_checkout_session() {
 
     // Determine the price ID based on the plan and form
     if ($plan === 'monthly') {
-        $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc'; // Update with your actual price ID for monthly plan
+        $price_id = 'price_1PTpZBHrZfxkHCcnbQRzh5rL'; // Update with your actual price ID for monthly plan
         $mode = 'subscription';
     } elseif ($plan === 'annually') {
-        $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM'; // Update with your actual price ID for annual plan
+        $price_id = 'price_1PTpZoHrZfxkHCcnmwDV0mXm'; // Update with your actual price ID for annual plan
         $mode = 'subscription';
     } elseif ($plan === '10-page-no-sub') {
-        $price_id = 'price_1PTnmnHrZfxkHCcnBjcSLQad'; // Update with your actual price ID for 10-page-no-sub plan
+        $price_id = 'price_1PTq1QHrZfxkHCcnjMmehUOX'; // Update with your actual price ID for 10-page-no-sub plan
     } elseif ($plan === '10-page-with-sub') {
-        $price_id = 'price_1PTnnKHrZfxkHCcnZ8k8UCcE'; // Update with your actual price ID for 10-page-with-sub plan
+        $price_id = 'price_1PTpbmHrZfxkHCcnkCPJz1ce'; // Update with your actual price ID for 10-page-with-sub plan
     } else {
         $price = sanitize_text_field($form_array['price']);
         $line_items[] = [
@@ -177,8 +181,6 @@ function create_stripe_checkout_session() {
 add_action('wp_ajax_create_stripe_checkout_session', 'create_stripe_checkout_session');
 add_action('wp_ajax_nopriv_create_stripe_checkout_session', 'create_stripe_checkout_session');
 
-
-
 // Register the webhook endpoint
 add_action('rest_api_init', function () {
     register_rest_route('wpmm/v1', '/stripe-webhook', array(
@@ -192,7 +194,7 @@ add_action('rest_api_init', function () {
 function stripe_webhook_handler(WP_REST_Request $request) {
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = getenv('whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y');
+    $endpoint_secret = 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y';
 
     // Log the payload for debugging
     error_log('Stripe Webhook Payload: ' . $payload);
@@ -274,5 +276,3 @@ function handle_checkout_session_completed($session) {
         error_log('User with email ' . $email . ' already exists.');
     }
 }
-
-
