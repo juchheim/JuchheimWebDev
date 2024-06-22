@@ -135,6 +135,7 @@ function juchheim_handle_form_submission() {
         // Create a Stripe Checkout session
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
+            'customer_email' => $email,
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'usd',

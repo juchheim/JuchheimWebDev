@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     stripe.redirectToCheckout({
                         sessionId: response.data.session_id
-                    }).then(function (result) {
+                    }).then(function(result) {
                         if (result.error) {
                             // Show error to the customer
                             alert(result.error.message);
