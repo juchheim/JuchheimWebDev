@@ -118,8 +118,8 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
     error_log('Webhook handler called'); // Debug logging to confirm handler is called
 
     $payload = $request->get_body();
-    $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'YOUR_STRIPE_ENDPOINT_SECRET';
+    $sig_header = isset($_SERVER['HTTP_STRIPE_SIGNATURE']) ? $_SERVER['HTTP_STRIPE_SIGNATURE'] : '';
+    $endpoint_secret = 'whsec_kNP7kmke4yorjL837t5vybbFzFjyxXSx';
 
     $event = null;
 
