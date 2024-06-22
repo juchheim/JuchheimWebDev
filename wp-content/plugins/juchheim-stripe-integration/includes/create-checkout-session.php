@@ -12,22 +12,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = sanitize_text_field($_POST['name']);
     $email = sanitize_email($_POST['email']);
     $password = sanitize_text_field($_POST['password']);
-    $plan = isset($_POST['plan']) ? sanitize_text_field($_POST['plan']) : null;
+    $plan = sanitize_text_field($_POST['plan']);
     $price = isset($_POST['price']) ? sanitize_text_field($_POST['price']) : null;
 
-    try {
-        $amount = ($plan === 'monthly') ? 2500 : ($plan === 'annually' ? 25000 : ($plan === '10-page-no-sub' ? 100000 : 150000));
-        if ($price) {
-            $amount = $price * 100;
-        }
+    // Determine the amount based on the plan
+    $amount = ($plan === 'monthly') ? 2500 : ($plan === 'annually' ? 25000 : ($plan === '10-page-no-sub' ? 100000 : 150000));
+    if ($price) {
+        $amount = $price * 100;
+    }
 
+    try {
         $checkout_session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'usd',
                     'product_data' => [
-                        'name' => $plan ? $plan : 'Custom Price',
+                        'name' => ucfirst($plan) . ' Plan',
                     ],
                     'unit_amount' => $amount,
                 ],

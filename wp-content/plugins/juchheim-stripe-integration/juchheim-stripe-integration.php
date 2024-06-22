@@ -45,52 +45,52 @@ function juchheim_payment_forms_shortcode() {
         </form>
     </div>
 
-<div class="content" id="design-development">
-    <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-        <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+    <div class="content" id="design-development">
+        <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
+            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
-        <label for="dev-name">Name:</label>
-        <input type="text" id="dev-name" name="name" required>
+            <label for="dev-name">Name:</label>
+            <input type="text" id="dev-name" name="name" required>
 
-        <label for="dev-email">Email:</label>
-        <input type="email" id="dev-email" name="email" required>
+            <label for="dev-email">Email:</label>
+            <input type="email" id="dev-email" name="email" required>
 
-        <label for="dev-password">Password:</label>
-        <input type="password" id="dev-password" name="password" required>
+            <label for="dev-password">Password:</label>
+            <input type="password" id="dev-password" name="password" required>
 
-        <label for="dev-plan">Choose your plan:</label>
-        <select id="dev-plan" name="plan">
-            <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
-            <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
-        </select>
+            <label for="dev-plan">Choose your plan:</label>
+            <select id="dev-plan" name="plan">
+                <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
+                <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
+            </select>
 
-        <button type="submit">Submit</button>
-        <input type="hidden" name="action" value="create_checkout_session">
-    </form>
-</div>
+            <button type="submit">Submit</button>
+            <input type="hidden" name="action" value="create_checkout_session">
+        </form>
+    </div>
 
-<div class="content" id="custom">
-    <form id="custom-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-        <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+    <div class="content" id="custom">
+        <form id="custom-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
+            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
-        <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
+            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
 
-        <label for="custom-name">Name:</label>
-        <input type="text" id="custom-name" name="name" required>
+            <label for="custom-name">Name:</label>
+            <input type="text" id="custom-name" name="name" required>
 
-        <label for="custom-email">Email:</label>
-        <input type="email" id="custom-email" name="email" required>
+            <label for="custom-email">Email:</label>
+            <input type="email" id="custom-email" name="email" required>
 
-        <label for="custom-password">Password:</label>
-        <input type="password" id="custom-password" name="password" required>
+            <label for="custom-password">Password:</label>
+            <input type="password" id="custom-password" name="password" required>
 
-        <label for="custom-price">Price:</label>
-        <input type="number" id="custom-price" name="price" required>
+            <label for="custom-price">Price:</label>
+            <input type="number" id="custom-price" name="price" required>
 
-        <button type="submit">Submit</button>
-        <input type="hidden" name="action" value="create_checkout_session">
-    </form>
-</div>
+            <button type="submit">Submit</button>
+            <input type="hidden" name="action" value="create_checkout_session">
+        </form>
+    </div>
 
     <?php
     return ob_get_clean();
@@ -104,6 +104,7 @@ function juchheim_create_checkout_session() {
 add_action('wp_ajax_create_checkout_session', 'juchheim_create_checkout_session');
 add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_session');
 
+// Register REST API route
 add_action('rest_api_init', function () {
     register_rest_route('stripe/v1', '/webhook', array(
         'methods' => WP_REST_Server::CREATABLE,
@@ -111,13 +112,17 @@ add_action('rest_api_init', function () {
     ));
 });
 
+// Webhook handler function
 function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
+    error_log('Webhook handler called'); // Debug logging to confirm handler is called
+
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
     $endpoint_secret = 'YOUR_STRIPE_ENDPOINT_SECRET';
 
     $event = null;
 
+    // Verify the webhook signature
     try {
         $event = \Stripe\Webhook::constructEvent(
             $payload, $sig_header, $endpoint_secret
@@ -130,7 +135,8 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
         return new WP_Error('invalid_signature', 'Invalid Signature', array('status' => 400));
     }
 
-    if ($event->type == 'payment_intent.succeeded') {
+    // Handle the event type
+    if ($event->type == 'payment_intent.succeeded') { // Change this to 'checkout.session.completed' if using Checkout
         $payment_intent = $event->data->object;
         $metadata = $payment_intent->metadata;
 
@@ -139,8 +145,8 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
         $password = $metadata->password;
         $name = $metadata->name;
 
+        // Create WordPress user if not exists
         if (!email_exists($email)) {
-            // Create WordPress user
             $user_id = wp_create_user($email, $password, $email);
             wp_update_user([
                 'ID' => $user_id,

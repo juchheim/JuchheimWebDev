@@ -985,7 +985,7 @@ body {
 
 /* Parallax background */
 .parallax {
-    background: url('/wp-content/uploads/2024/06/home_background.jpg') no-repeat center top;
+    background: url('/wp-content/uploads/2024/06/juchheim-background2-scaled.jpg') no-repeat center top;
     background-attachment: fixed;
     background-size: cover;
     width: 100%;
@@ -1544,5 +1544,20 @@ h5 {
     .content {
         padding: 10px;
     }
+
+	h5 {
+		text-align: center;
+		color: white;
+		font-size:42px;
+		padding: 50px 20px 40px 20px;
+		margin:0;
+		text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
+	}
+
+	.site-info {
+		padding: 0 30px 0 30px;
+		margin: 0;
+	}
+	
 }
 
