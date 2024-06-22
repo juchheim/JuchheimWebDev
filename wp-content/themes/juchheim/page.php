@@ -82,7 +82,7 @@ get_header();
                 <li class="tab" data-tab="custom">Custom</li>
             </ul>
             <div class="tab-content">
-				<?php echo do_shortcode('[juchheim_payment_forms]'); ?>
+				<?php echo do_shortcode('[juchheim_stripe_forms]'); ?>
             </div>
         </div>
     </main>
