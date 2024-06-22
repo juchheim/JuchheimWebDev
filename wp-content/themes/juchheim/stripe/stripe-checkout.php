@@ -5,7 +5,7 @@ require_once('../../../../wp-load.php'); // Adjust the path as needed to include
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Set your secret key. Remember to switch to your live secret key in production.
-\Stripe\Stripe::setApiKey('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');
+\Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
 // Sanitize and validate the POST parameters
 $name = sanitize_text_field($_POST['name']);

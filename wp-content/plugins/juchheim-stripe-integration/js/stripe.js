@@ -19,6 +19,6 @@ document.getElementById('web-hosting-form').addEventListener('submit', async (ev
         return;
     }
 
-    const stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY');
+    const stripe = Stripe('pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5');
     stripe.redirectToCheckout({ sessionId: data.id });
 });
