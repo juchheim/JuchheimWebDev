@@ -118,7 +118,7 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
 
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'YOUR_STRIPE_ENDPOINT_SECRET';
+    $endpoint_secret = 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y';
 
     $event = null;
 
