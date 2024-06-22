@@ -1,30 +1,24 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var stripe = Stripe('pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5');
-    
-        document.querySelectorAll('form').forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-    
-                var formData = new FormData(form);
-    
-                fetch('/wp-admin/admin-ajax.php?action=create_checkout_session', {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    if (data.error) {
-                        console.error(data.error);
-                    } else {
-                        stripe.redirectToCheckout({ sessionId: data.id });
-                    }
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
-            });
-        });
+document.getElementById('web-hosting-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const response = await fetch('/wp-content/themes/juchheim/stripe/stripe-checkout.php', {
+        method: 'POST',
+        body: formData,
     });
-    
+
+    if (!response.ok) {
+        console.error('Network response was not ok', response);
+        return;
+    }
+
+    const data = await response.json();
+    if (data.error) {
+        console.error('Error:', data.error);
+        return;
+    }
+
+    const stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY');
+    stripe.redirectToCheckout({ sessionId: data.id });
+});
