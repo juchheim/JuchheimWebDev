@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 // Enqueue Stripe.js and custom JS
 function juchheim_enqueue_stripe_scripts() {
     wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/');
-    wp_enqueue_script('stripe-custom-js', plugin_dir_url(__FILE__) . 'js/stripe.js', array('stripe-js'), null, true);
+    wp_enqueue_script('stripe-custom-js', plugin_dir_url(__FILE__) . 'js/stripe.js', array('jquery', 'stripe-js'), null, true);
 }
 add_action('wp_enqueue_scripts', 'juchheim_enqueue_stripe_scripts');
 
@@ -22,7 +22,7 @@ function juchheim_payment_forms_shortcode() {
     ob_start();
     ?>
     <div class="content active" id="web-hosting">
-        <form id="web-hosting-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
+        <form id="web-hosting-form">
             <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
 
             <label for="name">Name:</label>
@@ -41,65 +41,57 @@ function juchheim_payment_forms_shortcode() {
             </select>
 
             <button type="submit">Submit</button>
-            <input type="hidden" name="action" value="create_checkout_session">
         </form>
     </div>
-
-    <div class="content" id="design-development">
-        <form id="development-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
-
-            <label for="dev-name">Name:</label>
-            <input type="text" id="dev-name" name="name" required>
-
-            <label for="dev-email">Email:</label>
-            <input type="email" id="dev-email" name="email" required>
-
-            <label for="dev-password">Password:</label>
-            <input type="password" id="dev-password" name="password" required>
-
-            <label for="dev-plan">Choose your plan:</label>
-            <select id="dev-plan" name="plan">
-                <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
-                <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
-            </select>
-
-            <button type="submit">Submit</button>
-            <input type="hidden" name="action" value="create_checkout_session">
-        </form>
-    </div>
-
-    <div class="content" id="custom">
-        <form id="custom-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST">
-            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
-
-            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
-
-            <label for="custom-name">Name:</label>
-            <input type="text" id="custom-name" name="name" required>
-
-            <label for="custom-email">Email:</label>
-            <input type="email" id="custom-email" name="email" required>
-
-            <label for="custom-password">Password:</label>
-            <input type="password" id="custom-password" name="password" required>
-
-            <label for="custom-price">Price:</label>
-            <input type="number" id="custom-price" name="price" required>
-
-            <button type="submit">Submit</button>
-            <input type="hidden" name="action" value="create_checkout_session">
-        </form>
-    </div>
-
     <?php
     return ob_get_clean();
 }
 add_shortcode('juchheim_payment_forms', 'juchheim_payment_forms_shortcode');
 
-// Include the create checkout session script
+// Handle AJAX request for creating a checkout session
 function juchheim_create_checkout_session() {
-    require_once plugin_dir_path(__FILE__) . 'includes/create-checkout-session.php';
+    check_ajax_referer('stripe_nonce', 'stripe_nonce');
+
+    require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+
+    $name = sanitize_text_field($_POST['name']);
+    $email = sanitize_email($_POST['email']);
+    $password = sanitize_text_field($_POST['password']);
+    $plan = sanitize_text_field($_POST['plan']);
+
+    try {
+        $customer = \Stripe\Customer::create([
+            'email' => $email,
+            'name' => $name,
+            'metadata' => [
+                'username' => $name,
+                'password' => $password,
+            ],
+        ]);
+
+        $checkout_session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'customer' => $customer->id,
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $plan === 'monthly' ? 'Monthly Plan' : 'Annual Plan',
+                    ],
+                    'unit_amount' => $plan === 'monthly' ? 2500 : 25000,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'subscription',
+            'success_url' => site_url('/success?session_id={CHECKOUT_SESSION_ID}'),
+            'cancel_url' => site_url('/cancel'),
+        ]);
+
+        wp_send_json_success(['id' => $checkout_session->id]);
+    } catch (Exception $e) {
+        wp_send_json_error(['error' => $e->getMessage()]);
+    }
 }
 add_action('wp_ajax_create_checkout_session', 'juchheim_create_checkout_session');
 add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_session');
@@ -171,3 +163,13 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
 
 // Ensure Stripe PHP library is included
 require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+
+// Ensure ajaxurl is available on the frontend
+function add_ajaxurl_to_frontend() {
+    ?>
+    <script type="text/javascript">
+        var ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+    </script>
+    <?php
+}
+add_action('wp_head', 'add_ajaxurl_to_frontend');

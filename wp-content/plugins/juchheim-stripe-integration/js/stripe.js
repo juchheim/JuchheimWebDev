@@ -3,9 +3,12 @@ document.getElementById('web-hosting-form').addEventListener('submit', async (ev
 
     const formData = new FormData(event.target);
 
-    const response = await fetch('/wp-content/themes/juchheim/stripe/stripe-checkout.php', {
+    const response = await fetch(ajaxurl, {
         method: 'POST',
         body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
     });
 
     if (!response.ok) {
@@ -20,5 +23,5 @@ document.getElementById('web-hosting-form').addEventListener('submit', async (ev
     }
 
     const stripe = Stripe('pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5');
-    stripe.redirectToCheckout({ sessionId: data.id });
+    stripe.redirectToCheckout({ sessionId: data.data.id });
 });
