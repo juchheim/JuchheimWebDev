@@ -106,7 +106,8 @@ add_action('wp_ajax_nopriv_create_checkout_session', 'juchheim_create_checkout_s
 
 // Register REST API route
 add_action('rest_api_init', function () {
-    register_rest_route('stripe/v1', '/webhook', array(
+    error_log('Registering custom REST API route for Stripe webhook'); // Debug logging
+    register_rest_route('wpmm/v1', '/stripe-webhook', array(
         'methods' => WP_REST_Server::CREATABLE,
         'callback' => 'juchheim_stripe_webhook_handler',
     ));
@@ -118,7 +119,7 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
 
     $payload = $request->get_body();
     $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-    $endpoint_secret = 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y';
+    $endpoint_secret = 'YOUR_STRIPE_ENDPOINT_SECRET';
 
     $event = null;
 
@@ -136,25 +137,28 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
     }
 
     // Handle the event type
-    if ($event->type == 'payment_intent.succeeded') { // Change this to 'checkout.session.completed' if using Checkout
-        $payment_intent = $event->data->object;
-        $metadata = $payment_intent->metadata;
+    if ($event->type == 'checkout.session.completed') { // Change this to 'payment_intent.succeeded' if using Payment Intents
+        $session = $event->data->object;
 
-        // Retrieve session details
-        $email = $metadata->email;
-        $password = $metadata->password;
-        $name = $metadata->name;
+        // Retrieve metadata from the session
+        $username = sanitize_text_field($session->metadata->username);
+        $email = sanitize_email($session->metadata->email);
+        $password = sanitize_text_field($session->metadata->password);
 
         // Create WordPress user if not exists
-        if (!email_exists($email)) {
-            $user_id = wp_create_user($email, $password, $email);
-            wp_update_user([
-                'ID' => $user_id,
-                'display_name' => $name,
-                'role' => 'subscriber'
-            ]);
+        if (!username_exists($username) && !email_exists($email)) {
+            $user_id = wp_create_user($username, $password, $email);
+            if (!is_wp_error($user_id)) {
+                wp_update_user([
+                    'ID' => $user_id,
+                    'display_name' => $username,
+                    'role' => 'subscriber'
+                ]);
 
-            error_log('User created: ' . $email);
+                error_log('User created: ' . $email);
+            } else {
+                error_log('User creation failed: ' . $user_id->get_error_message());
+            }
         } else {
             error_log('User already exists: ' . $email);
         }
@@ -164,3 +168,6 @@ function juchheim_stripe_webhook_handler(WP_REST_Request $request) {
 
     return new WP_REST_Response('Webhook Handled', 200);
 }
+
+// Ensure Stripe PHP library is included
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
