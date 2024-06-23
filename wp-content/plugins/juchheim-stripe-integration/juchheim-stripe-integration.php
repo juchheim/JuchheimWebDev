@@ -133,7 +133,7 @@ function juchheim_display_forms() {
             <label for="dev-password">Password:</label>
             <input type="password" id="dev-password" name="password" required>
 
-            <label for="dev-plan">Choose your plan:</label>
+            <label for="dev-plan">Choose your development option:</label>
             <select id="dev-plan" name="plan_type">
                 <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
                 <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
