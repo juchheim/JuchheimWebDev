@@ -40,7 +40,7 @@ function juchheim_handle_form() {
     $plan_type = sanitize_text_field($_POST['form_data']['plan_type']);
     $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcn9wIrRLIPgVvHEanFTyCB0tT4Oho1zWBWCl9MI1dmfr2OcSt5mF4SYH1eH6xzDhPlb3Xme8kR00t9xEP2jt');
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
 
     try {
         $session = \Stripe\Checkout\Session::create([
