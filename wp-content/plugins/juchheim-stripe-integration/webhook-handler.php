@@ -27,16 +27,13 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             $payload, $sig_header, 'whsec_FvNAupwXBRlM8JCgu1nefxOeBCqU2wAo'
         );
     } catch (\UnexpectedValueException $e) {
-        // Invalid payload
         error_log('Invalid payload');
         return new WP_Error('invalid_payload', 'Invalid payload', array('status' => 400));
     } catch (\Stripe\Exception\SignatureVerificationException $e) {
-        // Invalid signature
         error_log('Invalid signature: ' . $e->getMessage());
         return new WP_Error('invalid_signature', 'Invalid signature', array('status' => 400));
     }
 
-    // Handle the event
     switch ($event['type']) {
         case 'checkout.session.completed':
             $session = $event['data']['object'];
@@ -52,7 +49,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             // Log received data for debugging
             error_log("Received webhook: customer_email=$customer_email, name=$name");
 
-            // Create a new WordPress user
+            // Create a new WordPress user for all forms including the custom form
             if (email_exists($customer_email) == false) {
                 $user_id = wp_create_user($name, $password, $customer_email);
 
@@ -68,10 +65,10 @@ function handle_stripe_webhook(WP_REST_Request $request) {
 
             break;
         default:
-            // Unexpected event type
             error_log('Unexpected event type: ' . $event['type']);
             return new WP_Error('unexpected_event_type', 'Unexpected event type', array('status' => 400));
     }
 
     return new WP_REST_Response('Webhook handled', 200);
 }
+?>
