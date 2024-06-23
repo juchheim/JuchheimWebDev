@@ -148,7 +148,7 @@ function juchheim_handle_form_submission() {
     $name = sanitize_text_field($form_data['name']);
     $email = sanitize_email($form_data['email']);
     $password = sanitize_text_field($form_data['password']);
-    $plan = isset($form_data['plan']) ? sanitize_text_field($form_data['plan']) : '';
+    $plan = isset($form_data['plan_type']) ? sanitize_text_field($form_data['plan_type']) : '';
     $price = isset($form_data['price']) ? floatval($form_data['price']) : 0;
 
     // Validate form data
@@ -164,7 +164,7 @@ function juchheim_handle_form_submission() {
 
     try {
         // Determine amount based on plan or custom price
-        $amount = ($plan === 'monthly') ? 2500 : (($plan === 'annually') ? 25000 : $price * 100);
+        $amount = ($plan === 'monthly') ? 2500 : (($plan === 'annual') ? 25000 : $price * 100);
 
         // Create a Stripe Checkout session
         $session = \Stripe\Checkout\Session::create([
