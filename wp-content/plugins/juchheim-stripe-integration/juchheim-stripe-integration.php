@@ -64,6 +64,10 @@ function juchheim_handle_form() {
                 'mode' => 'payment',
                 'success_url' => site_url('/checkout-success'),
                 'cancel_url' => site_url('/checkout-cancelled'),
+                'metadata' => [
+                    'name' => sanitize_text_field($form_data['name']),
+                    'password' => sanitize_text_field($form_data['password']),
+                ],
             ]);
         } else {
             $session = \Stripe\Checkout\Session::create([
@@ -205,6 +209,10 @@ function juchheim_handle_form_submission() {
                 'mode' => 'payment',
                 'success_url' => site_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
                 'cancel_url' => site_url('/checkout-cancel/'),
+                'metadata' => [
+                    'name' => $name,
+                    'password' => $password,
+                ],
             ]);
         } else {
             $session = \Stripe\Checkout\Session::create([
