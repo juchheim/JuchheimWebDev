@@ -30,7 +30,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
     try {
         // Construct the event using the payload and signature
         $event = Webhook::constructEvent(
-            $payload, $sig_header, 'whsec_FvNAupwXBRlM8JCgu1nefxOeBCqU2wAo' // Replace with your actual webhook secret
+            $payload, $sig_header, 'whsec_JCCeY0rrfJPkbyYlAOPsmpoW8nR5Phg0' // Replace with your actual webhook secret
         );
     } catch (\UnexpectedValueException $e) {
         // Log an error if the payload is invalid
