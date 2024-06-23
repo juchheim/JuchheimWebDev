@@ -35,9 +35,7 @@ add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form');
 function juchheim_handle_form() {
     check_ajax_referer('stripe_nonce', 'nonce');
 
-    if (!isset($_POST['form_data']['plan_type'])) {
-        wp_send_json_error(array('message' => 'Plan type is required.'));
-    }
+   
 
     $plan_type = sanitize_text_field($_POST['form_data']['plan_type']);
     $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
