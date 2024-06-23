@@ -54,6 +54,7 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Attach the form submission handler to all relevant forms
     $('#web-hosting-form').on('submit', handleFormSubmission);
     $('#development-form').on('submit', handleFormSubmission);
     $('#custom-form').on('submit', handleFormSubmission);

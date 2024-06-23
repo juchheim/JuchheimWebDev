@@ -28,6 +28,41 @@ function juchheim_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'juchheim_enqueue_scripts');
 
+
+// Handle form submission via AJAX
+add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form');
+add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form');
+
+function juchheim_handle_form() {
+    check_ajax_referer('stripe_nonce', 'nonce');
+
+    if (!isset($_POST['form_data']['plan_type'])) {
+        wp_send_json_error(array('message' => 'Plan type is required.'));
+    }
+
+    $plan_type = sanitize_text_field($_POST['form_data']['plan_type']);
+    $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
+
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+
+    try {
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price' => $price_id,
+                'quantity' => 1,
+            ]],
+            'mode' => 'subscription',
+            'success_url' => site_url('/payment-success'),
+            'cancel_url' => site_url('/checkout-cancelled'),
+        ]);
+
+        wp_send_json_success(array('session_id' => $session->id));
+    } catch (Exception $e) {
+        wp_send_json_error(array('message' => $e->getMessage()));
+    }
+}
+
 // Shortcode to display forms
 function juchheim_display_forms() {
     ob_start();
@@ -46,9 +81,9 @@ function juchheim_display_forms() {
             <input type="password" id="password" name="password" required>
 
             <label for="plan">Choose your plan:</label>
-            <select id="plan" name="plan">
+            <select id="plan" name="plan_type">
                 <option value="monthly">Monthly - $25</option>
-                <option value="annually">Annually - $250</option>
+                <option value="annual">Annually - $250</option>
             </select>
 
             <button type="submit">Submit</button>
@@ -68,7 +103,7 @@ function juchheim_display_forms() {
             <input type="password" id="dev-password" name="password" required>
 
             <label for="dev-plan">Choose your plan:</label>
-            <select id="dev-plan" name="plan">
+            <select id="dev-plan" name="plan_type">
                 <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
                 <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
             </select>
@@ -222,3 +257,4 @@ add_action('rest_api_init', function() {
         'callback' => 'juchheim_stripe_webhook',
     ));
 });
+?>
