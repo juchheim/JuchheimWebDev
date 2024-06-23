@@ -28,7 +28,6 @@ function juchheim_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'juchheim_enqueue_scripts');
 
-
 // Handle form submission via AJAX
 add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form');
 add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form');
@@ -43,7 +42,7 @@ function juchheim_handle_form() {
     $plan_type = sanitize_text_field($_POST['form_data']['plan_type']);
     $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcn9wIrRLIPgVvHEanFTyCB0tT4Oho1zWBWCl9MI1dmfr2OcSt5mF4SYH1eH6xzDhPlb3Xme8kR00t9xEP2jt');
 
     try {
         $session = \Stripe\Checkout\Session::create([
@@ -53,8 +52,8 @@ function juchheim_handle_form() {
                 'quantity' => 1,
             ]],
             'mode' => 'subscription',
-            'success_url' => site_url('/payment-success'),
-            'cancel_url' => site_url('/checkout-cancelled'),
+            'success_url' => site_url('/success'),
+            'cancel_url' => site_url('/cancel'),
         ]);
 
         wp_send_json_success(array('session_id' => $session->id));
@@ -244,12 +243,10 @@ function juchheim_stripe_webhook() {
             break;
         default:
             // Unexpected event type
-            http_response_code(400);
-            exit();
+            echo 'Received unknown event type ' . $event['type'];
     }
 
     http_response_code(200);
-    exit();
 }
 add_action('rest_api_init', function() {
     register_rest_route('juchheim-stripe/v1', '/webhook', array(
