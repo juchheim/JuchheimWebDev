@@ -38,15 +38,15 @@ function juchheim_handle_form() {
     $email = sanitize_email($form_data['email']); // ensure email is included
 
     if ($form_id === 'web-hosting-form') {
-        $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
+        $price_id = ($plan_type === 'monthly') ? 'price_1PTpZBHrZfxkHCcnbQRzh5rL' : 'price_1PTpZoHrZfxkHCcnmwDV0mXm';
         $mode = 'subscription';
     } elseif ($form_id === 'development-form') {
-        $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTnmnHrZfxkHCcnBjcSLQad' : 'price_1PTnnKHrZfxkHCcnZ8k8UCcE';
+        $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTq1QHrZfxkHCcnjMmehUOX' : 'price_1PTpbmHrZfxkHCcnkCPJz1ce';
     } elseif ($form_id === 'custom-form') {
         $price = floatval($form_data['price']) * 100; // convert to cents
     }
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+    \Stripe\Stripe::setApiKey('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');
 
     try {
         if ($form_id === 'custom-form') {
@@ -191,7 +191,7 @@ function juchheim_handle_form_submission() {
         $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTnmnHrZfxkHCcnBjcSLQad' : 'price_1PTnnKHrZfxkHCcnZ8k8UCcE';
     }
 
-    \Stripe\Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+    \Stripe\Stripe::setApiKey('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');
 
     try {
         if ($form_id === 'custom-form') {

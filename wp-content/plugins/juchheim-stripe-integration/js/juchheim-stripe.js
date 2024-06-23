@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
         return;
     }
 
-    var stripe = Stripe('pk_test_51PRj4aHrZfxkHCcnhKjEkTIKhaASMGZaE6iDQfHE4MaxcC1xvqfafGBBXEFYOO1AC0In0YwGJbDa4yFeM3DckrGQ00onFkBwh5');
+    var stripe = Stripe('pk_live_51PRj4aHrZfxkHCcnVuz3FHz3C8v84e9o9G2yeGBuWZS3a0KbJ4rVrwr3JQ8gWnmxT1JkHRGVnlaCpz9yzXeMGO4w00ArLOmw87');
 
     function handleFormSubmission(event) {
         event.preventDefault();

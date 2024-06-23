@@ -6,7 +6,7 @@ use Stripe\Webhook;
 use Stripe\Stripe;
 
 // Set the Stripe API key (replace with your actual API key in a production environment)
-Stripe::setApiKey('sk_test_51PRj4aHrZfxkHCcnjYNK7r3Ev1e1sIlU4R3itbutVSG1fJKAzfEOehjvFZz7B9A8v5Hu0fF0Dh9sv5ZYmbrd9swh00VLTD1J2Q');
+Stripe::setApiKey('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');
 
 // Register the webhook handler route with the WordPress REST API
 add_action('rest_api_init', function() {
