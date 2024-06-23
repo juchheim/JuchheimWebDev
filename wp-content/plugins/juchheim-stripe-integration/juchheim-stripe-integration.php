@@ -248,7 +248,7 @@ function juchheim_stripe_webhook() {
 
     try {
         $event = \Stripe\Webhook::constructEvent(
-            $payload, $sig_header, 'whsec_FvNAupwXBRlM8JCgu1nefxOeBCqU2wAo'
+            $payload, $sig_header, 'whsec_JCCeY0rrfJPkbyYlAOPsmpoW8nR5Phg0'
         );
     } catch (\UnexpectedValueException $e) {
         http_response_code(400);
