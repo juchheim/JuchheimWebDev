@@ -149,6 +149,10 @@ function juchheim_handle_form_submission() {
             'mode' => 'payment',
             'success_url' => site_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
             'cancel_url' => site_url('/checkout-cancel/'),
+            'metadata' => [
+                'name' => $name,
+                'password' => $password,
+            ],
         ]);
 
         wp_send_json_success(['session_id' => $session->id]);
@@ -159,3 +163,6 @@ function juchheim_handle_form_submission() {
 }
 add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form_submission');
 add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form_submission');
+
+// Include the webhook handler
+require_once plugin_dir_path(__FILE__) . 'webhook-handler.php';
