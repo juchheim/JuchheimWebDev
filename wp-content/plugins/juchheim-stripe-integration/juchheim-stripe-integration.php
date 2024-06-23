@@ -35,6 +35,7 @@ function juchheim_handle_form() {
     $form_id = sanitize_text_field($form_data['form_id']);
     $price_id = '';
     $mode = 'payment'; // default to one-time payment
+    $email = sanitize_email($form_data['email']); // ensure email is included
 
     if ($form_id === 'web-hosting-form') {
         $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
@@ -59,6 +60,7 @@ function juchheim_handle_form() {
                     ],
                     'quantity' => 1,
                 ]],
+                'customer_email' => $email,
                 'mode' => 'payment',
                 'success_url' => site_url('/checkout-success'),
                 'cancel_url' => site_url('/checkout-cancelled'),
@@ -70,9 +72,14 @@ function juchheim_handle_form() {
                     'price' => $price_id,
                     'quantity' => 1,
                 ]],
+                'customer_email' => $email,
                 'mode' => $mode,
                 'success_url' => site_url('/checkout-success'),
                 'cancel_url' => site_url('/checkout-cancelled'),
+                'metadata' => [
+                    'name' => sanitize_text_field($form_data['name']),
+                    'password' => sanitize_text_field($form_data['password']),
+                ],
             ]);
         }
 
@@ -194,17 +201,19 @@ function juchheim_handle_form_submission() {
                     ],
                     'quantity' => 1,
                 ]],
+                'customer_email' => $email,
                 'mode' => 'payment',
                 'success_url' => site_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
                 'cancel_url' => site_url('/checkout-cancel/'),
             ]);
         } else {
-            $session = \Stripe\Checkout.Session::create([
+            $session = \Stripe\Checkout\Session::create([
                 'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price' => $price_id,
                     'quantity' => 1,
                 ]],
+                'customer_email' => $email,
                 'mode' => $mode,
                 'success_url' => site_url('/checkout-success/?session_id={CHECKOUT_SESSION_ID}'),
                 'cancel_url' => site_url('/checkout-cancel/'),
