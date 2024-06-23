@@ -164,5 +164,61 @@ function juchheim_handle_form_submission() {
 add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form_submission');
 add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form_submission');
 
-// Include the webhook handler
-require_once plugin_dir_path(__FILE__) . 'webhook-handler.php';
+// Create the webhook handler endpoint
+function juchheim_stripe_webhook() {
+    $payload = @file_get_contents('php://input');
+    $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+    $event = null;
+
+    try {
+        $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, 'whsec_FvNAupwXBRlM8JCgu1nefxOeBCqU2wAo'
+        );
+    } catch (\UnexpectedValueException $e) {
+        // Invalid payload
+        http_response_code(400);
+        exit();
+    } catch (\Stripe\Exception\SignatureVerificationException $e) {
+        // Invalid signature
+        http_response_code(400);
+        exit();
+    }
+
+    // Handle the event
+    switch ($event['type']) {
+        case 'checkout.session.completed':
+            $session = $event['data']['object'];
+
+            // Extract the customer's email and other relevant information
+            $customer_email = $session['customer_details']['email'];
+            $name = $session['metadata']['name'];
+            $password = $session['metadata']['password'];
+
+            // Create a new WordPress user
+            if (email_exists($customer_email) == false) {
+                $user_id = wp_create_user($name, $password, $customer_email);
+
+                if (is_wp_error($user_id)) {
+                    error_log('User creation failed: ' . $user_id->get_error_message());
+                } else {
+                    // Optionally, you can set additional user meta or roles here
+                    wp_update_user(array('ID' => $user_id, 'display_name' => $name));
+                }
+            }
+
+            break;
+        default:
+            // Unexpected event type
+            http_response_code(400);
+            exit();
+    }
+
+    http_response_code(200);
+    exit();
+}
+add_action('rest_api_init', function() {
+    register_rest_route('juchheim-stripe/v1', '/webhook', array(
+        'methods' => 'POST',
+        'callback' => 'juchheim_stripe_webhook',
+    ));
+});
