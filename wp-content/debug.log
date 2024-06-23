@@ -45,3 +45,4 @@ Stack trace:
 #5 {main}
   thrown in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-content/plugins/juchheim-stripe-integration/includes/stripe-functions.php on line 2
 [23-Jun-2024 01:57:08 UTC] Name: trip, Email: juchheim.spotify@gmail.com, Plan: monthly, Price: 0
+[23-Jun-2024 13:22:55 UTC] PHP Warning:  Undefined array key "plan_type" in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-content/plugins/juchheim-stripe-integration/juchheim-stripe-integration.php on line 34
