@@ -31,11 +31,13 @@ function juchheim_handle_form() {
     check_ajax_referer('stripe_nonce', 'nonce');
 
     $form_data = $_POST['form_data'];
-    $plan_type = sanitize_text_field($form_data['plan_type']);
     $form_id = sanitize_text_field($form_data['form_id']);
     $price_id = '';
     $mode = 'payment'; // default to one-time payment
     $email = sanitize_email($form_data['email']); // ensure email is included
+
+    // Add a check for 'plan_type' existence
+    $plan_type = isset($form_data['plan_type']) ? sanitize_text_field($form_data['plan_type']) : '';
 
     if ($form_id === 'web-hosting-form') {
         $price_id = ($plan_type === 'monthly') ? 'price_1PTpZBHrZfxkHCcnbQRzh5rL' : 'price_1PTpZoHrZfxkHCcnmwDV0mXm';
@@ -46,7 +48,7 @@ function juchheim_handle_form() {
         $price = floatval($form_data['price']) * 100; // convert to cents
     }
 
-    \Stripe\Stripe::setApiKey('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');
+    \Stripe\Stripe::setApiKey('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'); // Make sure to use your live secret key
 
     try {
         if ($form_id === 'custom-form') {
@@ -133,7 +135,7 @@ function juchheim_display_forms() {
             <label for="dev-password">Password:</label>
             <input type="password" id="dev-password" name="password" required>
 
-            <label for="dev-plan">Choose your development option:</label>
+            <label for="dev-plan">Choose your plan:</label>
             <select id="dev-plan" name="plan_type">
                 <option value="10-page-no-sub">10-page (no sub pages) - $1000</option>
                 <option value="10-page-with-sub">10-page (with sub pages) - $1500</option>
@@ -178,9 +180,9 @@ function juchheim_handle_form_submission() {
     $name = sanitize_text_field($form_data['name']);
     $email = sanitize_email($form_data['email']);
     $password = sanitize_text_field($form_data['password']);
+    $form_id = sanitize_text_field($form_data['form_id']);
     $plan_type = isset($form_data['plan_type']) ? sanitize_text_field($form_data['plan_type']) : '';
     $price = isset($form_data['price']) ? floatval($form_data['price']) * 100 : 0; // Convert price to cents
-    $form_id = sanitize_text_field($form_data['form_id']);
     $price_id = '';
     $mode = 'payment';
 
@@ -191,7 +193,7 @@ function juchheim_handle_form_submission() {
         $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTnmnHrZfxkHCcnBjcSLQad' : 'price_1PTnnKHrZfxkHCcnZ8k8UCcE';
     }
 
-    \Stripe\Stripe::setApiKey('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');
+    \Stripe\Stripe::setApiKey('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'); // Make sure to use your live secret key
 
     try {
         if ($form_id === 'custom-form') {
@@ -248,7 +250,7 @@ function juchheim_stripe_webhook() {
 
     try {
         $event = \Stripe\Webhook::constructEvent(
-            $payload, $sig_header, 'whsec_JCCeY0rrfJPkbyYlAOPsmpoW8nR5Phg0'
+            $payload, $sig_header, 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y' // Replace with your actual live webhook secret
         );
     } catch (\UnexpectedValueException $e) {
         http_response_code(400);
@@ -264,6 +266,7 @@ function juchheim_stripe_webhook() {
             $customer_email = $session['customer_details']['email'];
             $name = $session['metadata']['name'];
             $password = $session['metadata']['password'];
+            $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
 
             if (email_exists($customer_email) == false) {
                 $user_id = wp_create_user($name, $password, $customer_email);
@@ -272,11 +275,30 @@ function juchheim_stripe_webhook() {
                     error_log('User creation failed: ' . $user_id->get_error_message());
                 } else {
                     wp_update_user(array('ID' => $user_id, 'display_name' => $name));
+                    error_log("User created successfully: user_id=$user_id");
+
+                    // Send an email notification
+                    $to = 'juchheim@gmail.com';
+                    $subject = 'New User Registration';
+                    $message = "A new user has registered:\n\n";
+                    $message .= "Name: $name\n";
+                    $message .= "Email: $customer_email\n";
+                    $message .= "Product Purchased: $product_name\n";
+                    $headers = array('Content-Type: text/plain; charset=UTF-8');
+                    if (wp_mail($to, $subject, $message, $headers)) {
+                        error_log('Notification email sent successfully.');
+                    } else {
+                        error_log('Failed to send notification email.');
+                    }
                 }
+            } else {
+                error_log('User already exists: ' . $customer_email);
             }
+
             break;
         default:
-            echo 'Received unknown event type ' . $event['type'];
+            error_log('Unexpected event type: ' . $event['type']);
+            return new WP_Error('unexpected_event_type', 'Unexpected event type', array('status' => 400));
     }
 
     http_response_code(200);
