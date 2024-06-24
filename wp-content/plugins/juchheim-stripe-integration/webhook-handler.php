@@ -54,7 +54,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             $customer_email = $session['customer_details']['email'];
             $name = $session['metadata']['name'];
             $password = $session['metadata']['password'];
-            $product_name = $session['display_items'][0]['custom']['name'];
+            $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
 
             // Log the received data for debugging purposes
             error_log("Received webhook: customer_email=$customer_email, name=$name, password=$password, product=$product_name");
@@ -80,7 +80,11 @@ function handle_stripe_webhook(WP_REST_Request $request) {
                     $message .= "Email: $customer_email\n";
                     $message .= "Product Purchased: $product_name\n";
                     $headers = array('Content-Type: text/plain; charset=UTF-8');
-                    wp_mail($to, $subject, $message, $headers);
+                    if (wp_mail($to, $subject, $message, $headers)) {
+                        error_log('Notification email sent successfully.');
+                    } else {
+                        error_log('Failed to send notification email.');
+                    }
                 }
             } else {
                 // Log a message if the user already exists
