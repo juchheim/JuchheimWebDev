@@ -5,8 +5,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Stripe\Webhook;
 use Stripe\Stripe;
 
-// Set the Stripe API key (replace with your actual API key in a production environment)
-Stripe::setApiKey('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');
+// Set the Stripe API key (replace with your actual production API key)
+Stripe::setApiKey('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'); // Make sure to use your live secret key
 
 // Register the webhook handler route with the WordPress REST API
 add_action('rest_api_init', function() {
@@ -30,7 +30,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
     try {
         // Construct the event using the payload and signature
         $event = Webhook::constructEvent(
-            $payload, $sig_header, 'whsec_JCCeY0rrfJPkbyYlAOPsmpoW8nR5Phg0' // Replace with your actual webhook secret
+            $payload, $sig_header, 'whsec_9hagU5Hzd6BGr6oVxGp7mkybAZn1Ju3Y' // Replace with your actual live webhook secret
         );
     } catch (\UnexpectedValueException $e) {
         // Log an error if the payload is invalid
@@ -54,9 +54,10 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             $customer_email = $session['customer_details']['email'];
             $name = $session['metadata']['name'];
             $password = $session['metadata']['password'];
+            $product_name = $session['display_items'][0]['custom']['name'];
 
             // Log the received data for debugging purposes
-            error_log("Received webhook: customer_email=$customer_email, name=$name");
+            error_log("Received webhook: customer_email=$customer_email, name=$name, password=$password, product=$product_name");
 
             // Check if the email already exists in WordPress
             if (email_exists($customer_email) == false) {
@@ -69,6 +70,17 @@ function handle_stripe_webhook(WP_REST_Request $request) {
                 } else {
                     // Optionally, you can set additional user meta or roles here
                     wp_update_user(array('ID' => $user_id, 'display_name' => $name));
+                    error_log("User created successfully: user_id=$user_id");
+
+                    // Send an email notification
+                    $to = 'juchheim@gmail.com';
+                    $subject = 'New User Registration';
+                    $message = "A new user has registered:\n\n";
+                    $message .= "Name: $name\n";
+                    $message .= "Email: $customer_email\n";
+                    $message .= "Product Purchased: $product_name\n";
+                    $headers = array('Content-Type: text/plain; charset=UTF-8');
+                    wp_mail($to, $subject, $message, $headers);
                 }
             } else {
                 // Log a message if the user already exists

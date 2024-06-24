@@ -1201,6 +1201,7 @@ body {
 .tab.active {
     background-color: rgba(255, 187, 59, 1);
     color: #fff;
+	font-weight: bold;
 }
 
 .tab-content {
@@ -1243,14 +1244,15 @@ form input:focus, form select:focus, form button:focus {
 }
 
 form button {
-    background-color: #50d6f8;
+    background-color: #20bee6;
     color: #fff;
+	font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 form button:hover {
-    background-color: #33c1e1;
+    background-color: #23accb;
 }
 
 form button:active {
@@ -1558,6 +1560,16 @@ h5 {
 		padding: 0 30px 0 30px;
 		margin: 0;
 	}
+
+	h3 {
+		padding-left:30px;
+		padding-right:30px;
+	}
 	
+	h5 {
+		padding-top:80px;
+		line-height: 60px;
+	}
+
 }
 
