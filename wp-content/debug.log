@@ -1,1 +1,2 @@
 [23-Jun-2024 18:10:54 UTC] PHP Warning:  Undefined array key "plan_type" in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-content/plugins/juchheim-stripe-integration/juchheim-stripe-integration.php on line 34
+[24-Jun-2024 00:49:25 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/class-wpdb.php on line 1987
