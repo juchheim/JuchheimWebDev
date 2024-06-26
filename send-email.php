@@ -1,5 +1,8 @@
 <?php
 // Ensure the script is being run within WordPress
+
+echo "send-email.php loaded.";
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
