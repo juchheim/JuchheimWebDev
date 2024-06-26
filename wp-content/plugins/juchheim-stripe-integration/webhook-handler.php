@@ -59,7 +59,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             error_log("Received webhook: customer_email=$customer_email, name=$name, product=$product_name");
 
             // Send an email notification using wp_mail()
-            $to = 'juchheim@gmail.com';
+            $to = 'ernest@juchheim.online';
             $subject = 'New User Registration';
             $message = "A new user has registered:\n\n";
             $message .= "Name: $name\n";
