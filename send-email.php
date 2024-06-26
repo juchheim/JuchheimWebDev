@@ -6,10 +6,10 @@ error_reporting(E_ALL);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Corrected file paths for PHPMailer
-require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/Exception.php';
-require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/SMTP.php';
+// Using relative paths for PHPMailer
+require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/Exception.php';
+require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/PHPMailer.php';
+require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/SMTP.php';
 
 $mail = new PHPMailer(true);
 
