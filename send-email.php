@@ -7,9 +7,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 // Using relative paths for PHPMailer
-require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/Exception.php';
-require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/PHPMailer.php';
-require 'wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/SMTP.php';
+require 'wp-content/plugins/juchheim-stripe-integration/vendor/PHPMailer/src/Exception.php';
+require 'wp-content/plugins/juchheim-stripe-integration/vendor/PHPMailer/src/PHPMailer.php';
+require 'wp-content/plugins/juchheim-stripe-integration/vendor/PHPMailer/src/SMTP.php';
 
 $mail = new PHPMailer(true);
 
