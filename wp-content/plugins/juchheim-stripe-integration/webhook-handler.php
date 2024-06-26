@@ -72,7 +72,7 @@ function handle_stripe_webhook(WP_REST_Request $request) {
                     wp_update_user(array('ID' => $user_id, 'display_name' => $name));
                     error_log("User created successfully: user_id=$user_id");
 
-                    // Send an email notification
+                    // Send an email notification using wp_mail()
                     $to = 'juchheim@gmail.com';
                     $subject = 'New User Registration';
                     $message = "A new user has registered:\n\n";
