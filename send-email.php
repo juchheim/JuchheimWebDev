@@ -2,9 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/Exception.php';
+require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/SMTP.php';
 
 $mail = new PHPMailer(true);
 
