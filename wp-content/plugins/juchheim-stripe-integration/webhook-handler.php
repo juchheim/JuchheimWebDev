@@ -53,42 +53,23 @@ function handle_stripe_webhook(WP_REST_Request $request) {
             // Extract the customer's email and other relevant information from the session
             $customer_email = $session['customer_details']['email'];
             $name = $session['metadata']['name'];
-            $password = $session['metadata']['password'];
             $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
 
             // Log the received data for debugging purposes
-            error_log("Received webhook: customer_email=$customer_email, name=$name, password=$password, product=$product_name");
+            error_log("Received webhook: customer_email=$customer_email, name=$name, product=$product_name");
 
-            // Check if the email already exists in WordPress
-            if (email_exists($customer_email) == false) {
-                // Create a new WordPress user if the email does not exist
-                $user_id = wp_create_user($name, $password, $customer_email);
-
-                if (is_wp_error($user_id)) {
-                    // Log an error if user creation fails
-                    error_log('User creation failed: ' . $user_id->get_error_message());
-                } else {
-                    // Optionally, you can set additional user meta or roles here
-                    wp_update_user(array('ID' => $user_id, 'display_name' => $name));
-                    error_log("User created successfully: user_id=$user_id");
-
-                    // Send an email notification using wp_mail()
-                    $to = 'juchheim@gmail.com';
-                    $subject = 'New User Registration';
-                    $message = "A new user has registered:\n\n";
-                    $message .= "Name: $name\n";
-                    $message .= "Email: $customer_email\n";
-                    $message .= "Product Purchased: $product_name\n";
-                    $headers = array('Content-Type: text/plain; charset=UTF-8');
-                    if (wp_mail($to, $subject, $message, $headers)) {
-                        error_log('Notification email sent successfully.');
-                    } else {
-                        error_log('Failed to send notification email.');
-                    }
-                }
+            // Send an email notification using wp_mail()
+            $to = 'juchheim@gmail.com';
+            $subject = 'New User Registration';
+            $message = "A new user has registered:\n\n";
+            $message .= "Name: $name\n";
+            $message .= "Email: $customer_email\n";
+            $message .= "Product Purchased: $product_name\n";
+            $headers = array('Content-Type: text/plain; charset=UTF-8');
+            if (wp_mail($to, $subject, $message, $headers)) {
+                error_log('Notification email sent successfully.');
             } else {
-                // Log a message if the user already exists
-                error_log('User already exists: ' . $customer_email);
+                error_log('Failed to send notification email.');
             }
 
             break;
