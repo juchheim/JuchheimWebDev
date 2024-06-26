@@ -264,6 +264,7 @@ function juchheim_stripe_webhook() {
             $customer_email = $session['customer_details']['email'];
             $name = $session['metadata']['name'];
             $password = $session['metadata']['password'];
+            $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
 
             if (email_exists($customer_email) == false) {
                 $user_id = wp_create_user($name, $password, $customer_email);
@@ -272,11 +273,30 @@ function juchheim_stripe_webhook() {
                     error_log('User creation failed: ' . $user_id->get_error_message());
                 } else {
                     wp_update_user(array('ID' => $user_id, 'display_name' => $name));
+                    error_log("User created successfully: user_id=$user_id");
+
+                    // Send an email notification using wp_mail()
+                    $to = 'juchheim@gmail.com';
+                    $subject = 'New User Registration';
+                    $message = "A new user has registered:\n\n";
+                    $message .= "Name: $name\n";
+                    $message .= "Email: $customer_email\n";
+                    $message .= "Product Purchased: $product_name\n";
+                    $headers = array('Content-Type: text/plain; charset=UTF-8');
+                    if (wp_mail($to, $subject, $message, $headers)) {
+                        error_log('Notification email sent successfully.');
+                    } else {
+                        error_log('Failed to send notification email.');
+                    }
                 }
+            } else {
+                error_log('User already exists: ' . $customer_email);
             }
+
             break;
         default:
-            echo 'Received unknown event type ' . $event['type'];
+            error_log('Unexpected event type: ' . $event['type']);
+            return new WP_Error('unexpected_event_type', 'Unexpected event type', array('status' => 400));
     }
 
     http_response_code(200);
