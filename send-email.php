@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -6,11 +10,10 @@ require 'https://juchheim.online/wp-content/plugins/juchheim-stripe-plugin/vendo
 require 'https://juchheim.online/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/PHPMailer.php';
 require 'https://juchheim.online/wp-content/plugins/juchheim-stripe-plugin/vendor/PHPMailer/src/SMTP.php';
 
-
 $mail = new PHPMailer(true);
 
 try {
-    //Server settings
+    // Server settings
     $mail->SMTPDebug = 0;                                     // Disable verbose debug output
     $mail->isSMTP();                                          // Set mailer to use SMTP
     $mail->Host       = 'smtp.elasticemail.com';              // Specify main and backup SMTP servers
@@ -20,7 +23,7 @@ try {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;          // Enable SSL encryption
     $mail->Port       = 465;                                  // TCP port to connect to
 
-    //Recipients
+    // Recipients
     $mail->setFrom('juchheim.spotify@gmail.com', 'Mailer');
     $mail->addAddress('juchheim@gmail.com', 'Recipient Name');     // Add a recipient
     $mail->addReplyTo('juchheim.spotify@gmail.com', 'Information');
