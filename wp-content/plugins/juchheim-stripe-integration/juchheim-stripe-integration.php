@@ -276,7 +276,7 @@ function juchheim_stripe_webhook() {
                     error_log("User created successfully: user_id=$user_id");
 
                     // Send an email notification using wp_mail()
-                    $to = 'ernest@juchheim.online';
+                    $to = 'juchheim@gmail.com';
                     $subject = 'New User Registration';
                     $message = "A new user has registered:\n\n";
                     $message .= "Name: $name\n";
