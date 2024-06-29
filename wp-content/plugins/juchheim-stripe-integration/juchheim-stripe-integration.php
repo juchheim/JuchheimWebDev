@@ -291,6 +291,20 @@ function juchheim_stripe_webhook() {
                 }
             } else {
                 error_log('User already exists: ' . $customer_email);
+
+                // Send an email notification using wp_mail() even if user exists
+                $to = 'juchheim@gmail.com'; // Changed to send to juchheim@gmail.com
+                $subject = 'Purchase Notification';
+                $message = "An existing user has made a purchase:\n\n";
+                $message .= "Name: $name\n";
+                $message .= "Email: $customer_email\n";
+                $message .= "Product Purchased: $product_name\n";
+                $headers = array('Content-Type: text/plain; charset=UTF-8');
+                if (wp_mail($to, $subject, $message, $headers)) {
+                    error_log('Notification email sent successfully.');
+                } else {
+                    error_log('Failed to send notification email.');
+                }
             }
 
             break;
