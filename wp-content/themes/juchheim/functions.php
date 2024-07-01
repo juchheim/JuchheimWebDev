@@ -206,7 +206,17 @@ function juchheim_redirect_subscribers($redirect_to, $request, $user) {
 add_filter('login_redirect', 'juchheim_redirect_subscribers', 10, 3);
 
 
-
+function juchheim_block_admin_access() {
+    if (is_user_logged_in()) {
+        $user = wp_get_current_user();
+        if (in_array('subscriber', (array) $user->roles)) {
+            // Redirect them to the subscriptions page if they try to access the admin area
+            wp_redirect(home_url('/subscriptions/'));
+            exit;
+        }
+    }
+}
+add_action('admin_init', 'juchheim_block_admin_access', 1);
 
 
 function juchheim_hide_admin_bar_for_subscribers() {
