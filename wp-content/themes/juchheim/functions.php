@@ -194,4 +194,18 @@ add_action('rest_api_init', function() {
 
 
 
+
+function juchheim_hide_admin_bar_for_subscribers() {
+    if (is_user_logged_in()) {
+        $user = wp_get_current_user();
+        if (in_array('subscriber', (array) $user->roles)) {
+            // Hide the admin bar
+            add_filter('show_admin_bar', '__return_false');
+        }
+    }
+}
+add_action('after_setup_theme', 'juchheim_hide_admin_bar_for_subscribers');
+
+
+
 ?>
