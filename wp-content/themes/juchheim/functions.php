@@ -237,4 +237,53 @@ function handle_stripe_webhook() {
     http_response_code(200);
 }
 
+
+// Display custom fields in user profile
+function juchheim_show_extra_profile_fields($user) {
+    // Retrieve the stored values
+    $products_purchased = get_the_author_meta('products_purchased', $user->ID);
+    $products_purchased = $products_purchased ? unserialize($products_purchased) : [];
+
+    ?>
+    <h3><?php _e('Extra Profile Information', 'juchheim'); ?></h3>
+
+    <table class="form-table">
+        <tr>
+            <th><label for="product_purchased"><?php _e('Product Purchased', 'juchheim'); ?></label></th>
+            <td>
+                <?php if (!empty($products_purchased)): ?>
+                    <?php foreach ($products_purchased as $index => $purchase): ?>
+                        <div>
+                            <input type="text" name="products_purchased[<?php echo $index; ?>][product_name]" value="<?php echo esc_attr($purchase['product_name']); ?>" class="regular-text" placeholder="Product Name" />
+                            <input type="text" name="products_purchased[<?php echo $index; ?>][purchase_price]" value="<?php echo esc_attr($purchase['purchase_price']); ?>" class="regular-text" placeholder="Purchase Price" />
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <div id="extra-fields"></div>
+                <button type="button" id="add-field"><?php _e('Add Another Product', 'juchheim'); ?></button>
+                <span class="description"><?php _e('Add products purchased and their prices.', 'juchheim'); ?></span>
+            </td>
+        </tr>
+    </table>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#add-field').click(function() {
+                var index = $('#extra-fields div').length;
+                $('#extra-fields').append(
+                    '<div>' +
+                        '<input type="text" name="products_purchased[' + index + '][product_name]" class="regular-text" placeholder="Product Name" />' +
+                        '<input type="text" name="products_purchased[' + index + '][purchase_price]" class="regular-text" placeholder="Purchase Price" />' +
+                    '</div>'
+                );
+            });
+        });
+    </script>
+    <?php
+}
+add_action('show_user_profile', 'juchheim_show_extra_profile_fields');
+add_action('edit_user_profile', 'juchheim_show_extra_profile_fields');
+
+
+
 ?>
