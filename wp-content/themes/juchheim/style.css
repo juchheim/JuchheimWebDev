@@ -1390,6 +1390,11 @@ h5 {
 	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
 }
 
+.site-info p {
+	text-align: center;
+	color: white;
+}
+
 
 
 @media (max-width: 1200px) {
