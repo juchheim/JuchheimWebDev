@@ -295,6 +295,19 @@ function juchheim_stripe_webhook() {
                 error_log('User already exists: ' . $customer_email);
             }
 
+            // Update user meta with multiple products purchased
+            $purchased_products = get_user_meta($user_id, 'purchased_products', true);
+            if (!$purchased_products) {
+                $purchased_products = [];
+            }
+            $purchased_products[] = [
+                'product_name' => $product_name,
+                'price' => $amount_total,
+                'date' => current_time('mysql')
+            ];
+            update_user_meta($user_id, 'purchased_products', $purchased_products);
+
+
             // Save customer information to Pods with published status
             $pod = pods('customer');
             $pod_id = $pod->add(array(
