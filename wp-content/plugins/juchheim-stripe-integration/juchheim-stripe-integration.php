@@ -38,7 +38,13 @@ function juchheim_handle_form() {
     $email = sanitize_email($form_data['email']); // ensure email is included
 
     if ($form_id === 'web-hosting-form') {
-        $price_id = ($plan_type === 'monthly') ? 'price_1PTpZBHrZfxkHCcnbQRzh5rL' : 'price_1PTpZoHrZfxkHCcnmwDV0mXm';
+        if ($plan_type === 'monthly') {
+            $price_id = 'price_1PTpZBHrZfxkHCcnbQRzh5rL';
+        } elseif ($plan_type === 'new-monthly') {
+            $price_id = 'price_1PXr3XHrZfxkHCcnlNAxUtuK';
+        } else {
+            $price_id = 'price_1PTpZoHrZfxkHCcnmwDV0mXm';
+        }
         $mode = 'subscription';
     } elseif ($form_id === 'development-form') {
         $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTq1QHrZfxkHCcnjMmehUOX' : 'price_1PTpbmHrZfxkHCcnkCPJz1ce';
@@ -114,6 +120,7 @@ function juchheim_display_forms() {
             <select id="plan" name="plan_type">
                 <option value="monthly">Monthly - $25</option>
                 <option value="annual">Annually - $250</option>
+                <option value="new-monthly">Testing - $0</option>
             </select>
 
             <button type="submit">Submit</button>
@@ -185,7 +192,13 @@ function juchheim_handle_form_submission() {
     $mode = 'payment';
 
     if ($form_id === 'web-hosting-form') {
-        $price_id = ($plan_type === 'monthly') ? 'price_1PTTKAHrZfxkHCcnPB3l0Cbc' : 'price_1PTToQHrZfxkHCcntMWJbMkM';
+        if ($plan_type === 'monthly') {
+            $price_id = 'price_1PTTKAHrZfxkHCcnPB3l0Cbc';
+        } elseif ($plan_type === 'new-monthly') {
+            $price_id = 'price_1PXr3XHrZfxkHCcnlNAxUtuK';
+        } else {
+            $price_id = 'price_1PTToQHrZfxkHCcntMWJbMkM';
+        }
         $mode = 'subscription';
     } elseif ($form_id === 'development-form') {
         $price_id = ($plan_type === '10-page-no-sub') ? 'price_1PTnmnHrZfxkHCcnBjcSLQad' : 'price_1PTnnKHrZfxkHCcnZ8k8UCcE';
@@ -529,4 +542,30 @@ function juchheim_cancel_subscription() {
 }
 add_action('wp_ajax_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
 add_action('wp_ajax_nopriv_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
+
+// Redirect Subscribers to Subscriptions Page Upon Login
+function juchheim_redirect_subscribers($redirect_to, $request, $user) {
+    // Is there a user to check?
+    if (isset($user->roles) && is_array($user->roles)) {
+        // Check if the user is a subscriber
+        if (in_array('subscriber', $user->roles)) {
+            // Redirect them to the subscriptions page
+            return home_url('/subscriptions/');
+        }
+    }
+    return $redirect_to;
+}
+add_filter('login_redirect', 'juchheim_redirect_subscribers', 10, 3);
+
+// Hide the Admin Bar for Subscribers
+function juchheim_hide_admin_bar_for_subscribers() {
+    if (is_user_logged_in()) {
+        $user = wp_get_current_user();
+        if (in_array('subscriber', (array) $user->roles)) {
+            // Hide the admin bar
+            add_filter('show_admin_bar', '__return_false');
+        }
+    }
+}
+add_action('after_setup_theme', 'juchheim_hide_admin_bar_for_subscribers');
 ?>
