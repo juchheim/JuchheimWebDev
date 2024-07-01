@@ -265,6 +265,8 @@ function juchheim_stripe_webhook() {
             $name = $session['metadata']['name'];
             $password = $session['metadata']['password'];
             $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
+            $amount_total = $session['amount_total'] / 100; // Amount is in cents, convert to dollars
+
 
             if (email_exists($customer_email) == false) {
                 $user_id = wp_create_user($name, $password, $customer_email);
@@ -301,6 +303,7 @@ function juchheim_stripe_webhook() {
                 'customer_name' => $name,
                 'email' => $customer_email,
                 'product_purchased' => $product_name,
+                'price' => $amount_total,
             ));
 
             if (is_wp_error($pod_id)) {
