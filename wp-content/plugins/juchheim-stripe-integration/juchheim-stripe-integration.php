@@ -293,12 +293,21 @@ function juchheim_stripe_webhook() {
                 error_log('User already exists: ' . $customer_email);
             }
 
-            // Save customer information to Pods
-            $pod_id = pods('customer')->save([
+            // Save customer information to Pods with published status
+            $pod = pods('customer');
+            $pod_id = $pod->add(array(
+                'post_title' => $name,
+                'post_status' => 'publish',
                 'customer_name' => $name,
                 'email' => $customer_email,
                 'product_purchased' => $product_name,
-            ]);
+            ));
+
+            if (is_wp_error($pod_id)) {
+                error_log('Failed to save customer to Pods: ' . $pod_id->get_error_message());
+            } else {
+                error_log("Customer saved to Pods successfully: pod_id=$pod_id");
+            }
 
             break;
         default:
