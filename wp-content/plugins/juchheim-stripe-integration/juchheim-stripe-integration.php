@@ -410,4 +410,123 @@ add_action('rest_api_init', function() {
         'callback' => 'juchheim_stripe_webhook',
     ));
 });
+
+// Add shortcode to display subscriptions
+function juchheim_display_subscriptions() {
+    if (!is_user_logged_in()) {
+        return 'You need to be logged in to view this page.';
+    }
+
+    $user_id = get_current_user_id();
+    $customer_email = wp_get_current_user()->user_email;
+    
+    ob_start();
+    ?>
+    <h3>Your Subscriptions</h3>
+    <div id="subscriptions"></div>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $.ajax({
+                url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                method: 'POST',
+                data: {
+                    action: 'juchheim_fetch_subscriptions',
+                    email: '<?php echo $customer_email; ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var subscriptions = response.data;
+                        var html = '<ul>';
+                        subscriptions.forEach(function(subscription) {
+                            html += '<li>' + subscription.product + ' - ' + subscription.status + ' <button class="cancel-subscription" data-subscription-id="' + subscription.id + '">Cancel</button></li>';
+                        });
+                        html += '</ul>';
+                        $('#subscriptions').html(html);
+                    } else {
+                        $('#subscriptions').html('<p>' + response.data + '</p>');
+                    }
+                }
+            });
+
+            $(document).on('click', '.cancel-subscription', function() {
+                var subscriptionId = $(this).data('subscription-id');
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                    method: 'POST',
+                    data: {
+                        action: 'juchheim_cancel_subscription',
+                        subscription_id: subscriptionId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Subscription canceled successfully.');
+                            location.reload();
+                        } else {
+                            alert('Failed to cancel subscription: ' + response.data);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('juchheim_subscriptions', 'juchheim_display_subscriptions');
+
+// Fetch Subscriptions Using AJAX
+function juchheim_fetch_subscriptions() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error('You must be logged in to view subscriptions.');
+    }
+
+    $customer_email = sanitize_email($_POST['email']);
+    \Stripe\Stripe::setApiKey('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');
+
+    try {
+        $customers = \Stripe\Customer::all(['email' => $customer_email]);
+        if (empty($customers->data)) {
+            wp_send_json_error('No subscriptions found for this email.');
+        }
+
+        $customer = $customers->data[0];
+        $subscriptions = \Stripe\Subscription::all(['customer' => $customer->id]);
+
+        $response = [];
+        foreach ($subscriptions->data as $subscription) {
+            $product = \Stripe\Product::retrieve($subscription->items->data[0]->price->product);
+            $response[] = [
+                'id' => $subscription->id,
+                'product' => $product->name,
+                'status' => $subscription->status,
+            ];
+        }
+
+        wp_send_json_success($response);
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage());
+    }
+}
+add_action('wp_ajax_juchheim_fetch_subscriptions', 'juchheim_fetch_subscriptions');
+add_action('wp_ajax_nopriv_juchheim_fetch_subscriptions', 'juchheim_fetch_subscriptions');
+
+// Cancel Subscriptions Using AJAX
+function juchheim_cancel_subscription() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error('You must be logged in to cancel subscriptions.');
+    }
+
+    $subscription_id = sanitize_text_field($_POST['subscription_id']);
+    \Stripe\Stripe::setApiKey('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');
+
+    try {
+        $subscription = \Stripe\Subscription::retrieve($subscription_id);
+        $subscription->cancel();
+        wp_send_json_success('Subscription canceled successfully.');
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage());
+    }
+}
+add_action('wp_ajax_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
+add_action('wp_ajax_nopriv_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
 ?>
