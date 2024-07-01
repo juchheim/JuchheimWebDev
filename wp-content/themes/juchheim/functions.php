@@ -192,20 +192,21 @@ add_action('rest_api_init', function() {
 
 
 
-
-
-
-function juchheim_block_admin_access() {
-    if (is_user_logged_in()) {
-        $user = wp_get_current_user();
-        if (in_array('subscriber', (array) $user->roles)) {
-            // Redirect them to the subscriptions page if they try to access the admin area
-            wp_redirect(home_url('/subscriptions/'));
-            exit;
+function juchheim_redirect_subscribers($redirect_to, $request, $user) {
+    // Is there a user to check?
+    if (isset($user->roles) && is_array($user->roles)) {
+        // Check if the user is a subscriber
+        if (in_array('subscriber', $user->roles)) {
+            // Redirect them to the subscriptions page
+            return home_url('/subscriptions/');
         }
     }
+    return $redirect_to;
 }
-add_action('admin_init', 'juchheim_block_admin_access', 1);
+add_filter('login_redirect', 'juchheim_redirect_subscribers', 10, 3);
+
+
+
 
 
 function juchheim_hide_admin_bar_for_subscribers() {
