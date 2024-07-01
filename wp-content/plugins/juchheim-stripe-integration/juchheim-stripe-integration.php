@@ -335,8 +335,10 @@ function juchheim_stripe_webhook() {
             $product_name = isset($session['display_items'][0]['custom']['name']) ? $session['display_items'][0]['custom']['name'] : 'Custom Payment';
             $amount_total = $session['amount_total'] / 100; // Amount is in cents, convert to dollars
 
-
-            if (email_exists($customer_email) == false) {
+            // Check if the user already exists
+            $user = get_user_by('email', $customer_email);
+            if (!$user) {
+                // Create the user if they don't exist
                 $user_id = wp_create_user($name, $password, $customer_email);
 
                 if (is_wp_error($user_id)) {
@@ -352,6 +354,7 @@ function juchheim_stripe_webhook() {
                     $message .= "Name: $name\n";
                     $message .= "Email: $customer_email\n";
                     $message .= "Product Purchased: $product_name\n";
+                    $message .= "Amount: \$$amount_total\n";
                     $headers = array('Content-Type: text/plain; charset=UTF-8');
                     if (wp_mail($to, $subject, $message, $headers)) {
                         error_log('Notification email sent successfully.');
@@ -361,29 +364,20 @@ function juchheim_stripe_webhook() {
                 }
             } else {
                 error_log('User already exists: ' . $customer_email);
+                $user_id = $user->ID;
             }
 
-            // Save custom fields in user profile
-            function juchheim_save_extra_profile_fields($user_id) {
-                if (!current_user_can('edit_user', $user_id)) {
-                    return false;
-                }
-
-                if (isset($_POST['products_purchased']) && is_array($_POST['products_purchased'])) {
-                    $products_purchased = array_map(function($product) {
-                        return [
-                            'product_name' => sanitize_text_field($product['product_name']),
-                            'purchase_price' => sanitize_text_field($product['purchase_price']),
-                        ];
-                    }, $_POST['products_purchased']);
-
-                    update_user_meta($user_id, 'products_purchased', serialize($products_purchased));
-                }
+            // Update user meta with multiple products purchased
+            $purchased_products = get_user_meta($user_id, 'products_purchased', true);
+            if (!$purchased_products) {
+                $purchased_products = [];
             }
-            add_action('personal_options_update', 'juchheim_save_extra_profile_fields');
-            add_action('edit_user_profile_update', 'juchheim_save_extra_profile_fields');
-
-
+            $purchased_products[] = [
+                'product_name' => $product_name,
+                'purchase_price' => $amount_total,
+                'date' => current_time('mysql')
+            ];
+            update_user_meta($user_id, 'products_purchased', serialize($purchased_products));
 
             // Save customer information to Pods with published status
             $pod = pods('customer');
