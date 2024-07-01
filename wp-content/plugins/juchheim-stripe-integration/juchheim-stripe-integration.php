@@ -240,7 +240,6 @@ function juchheim_handle_form_submission() {
 add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form_submission');
 add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form_submission');
 
-
 // Display custom fields in user profile
 function juchheim_show_extra_profile_fields($user) {
     // Retrieve the stored values
@@ -307,7 +306,6 @@ function juchheim_save_extra_profile_fields($user_id) {
 add_action('personal_options_update', 'juchheim_save_extra_profile_fields');
 add_action('edit_user_profile_update', 'juchheim_save_extra_profile_fields');
 
-
 // Webhook handler
 function juchheim_stripe_webhook() {
     $payload = @file_get_contents('php://input');
@@ -371,6 +369,8 @@ function juchheim_stripe_webhook() {
             $purchased_products = get_user_meta($user_id, 'products_purchased', true);
             if (!$purchased_products) {
                 $purchased_products = [];
+            } else {
+                $purchased_products = unserialize($purchased_products);
             }
             $purchased_products[] = [
                 'product_name' => $product_name,
