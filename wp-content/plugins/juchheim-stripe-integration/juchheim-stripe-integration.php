@@ -293,6 +293,13 @@ function juchheim_stripe_webhook() {
                 error_log('User already exists: ' . $customer_email);
             }
 
+            // Save customer information to Pods
+            $pod_id = pods('customer')->save([
+                'customer_name' => $name,
+                'email' => $customer_email,
+                'product_purchased' => $product_name,
+            ]);
+
             break;
         default:
             error_log('Unexpected event type: ' . $event['type']);
