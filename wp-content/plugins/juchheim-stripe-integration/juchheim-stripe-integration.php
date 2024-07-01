@@ -240,6 +240,74 @@ function juchheim_handle_form_submission() {
 add_action('wp_ajax_juchheim_handle_form', 'juchheim_handle_form_submission');
 add_action('wp_ajax_nopriv_juchheim_handle_form', 'juchheim_handle_form_submission');
 
+
+// Display custom fields in user profile
+function juchheim_show_extra_profile_fields($user) {
+    // Retrieve the stored values
+    $products_purchased = get_the_author_meta('products_purchased', $user->ID);
+    $products_purchased = $products_purchased ? unserialize($products_purchased) : [];
+
+    ?>
+    <h3><?php _e('Extra Profile Information', 'your-text-domain'); ?></h3>
+
+    <table class="form-table">
+        <tr>
+            <th><label for="product_purchased"><?php _e('Product Purchased', 'your-text-domain'); ?></label></th>
+            <td>
+                <?php if (!empty($products_purchased)): ?>
+                    <?php foreach ($products_purchased as $index => $purchase): ?>
+                        <div>
+                            <input type="text" name="products_purchased[<?php echo $index; ?>][product_name]" value="<?php echo esc_attr($purchase['product_name']); ?>" class="regular-text" placeholder="Product Name" />
+                            <input type="text" name="products_purchased[<?php echo $index; ?>][purchase_price]" value="<?php echo esc_attr($purchase['purchase_price']); ?>" class="regular-text" placeholder="Purchase Price" />
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <div id="extra-fields"></div>
+                <button type="button" id="add-field"><?php _e('Add Another Product', 'your-text-domain'); ?></button>
+                <span class="description"><?php _e('Add products purchased and their prices.', 'your-text-domain'); ?></span>
+            </td>
+        </tr>
+    </table>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#add-field').click(function() {
+                var index = $('#extra-fields div').length;
+                $('#extra-fields').append(
+                    '<div>' +
+                        '<input type="text" name="products_purchased[' + index + '][product_name]" class="regular-text" placeholder="Product Name" />' +
+                        '<input type="text" name="products_purchased[' + index + '][purchase_price]" class="regular-text" placeholder="Purchase Price" />' +
+                    '</div>'
+                );
+            });
+        });
+    </script>
+    <?php
+}
+add_action('show_user_profile', 'juchheim_show_extra_profile_fields');
+add_action('edit_user_profile', 'juchheim_show_extra_profile_fields');
+
+// Save custom fields in user profile
+function juchheim_save_extra_profile_fields($user_id) {
+    if (!current_user_can('edit_user', $user_id)) {
+        return false;
+    }
+
+    if (isset($_POST['products_purchased']) && is_array($_POST['products_purchased'])) {
+        $products_purchased = array_map(function($product) {
+            return [
+                'product_name' => sanitize_text_field($product['product_name']),
+                'purchase_price' => sanitize_text_field($product['purchase_price']),
+            ];
+        }, $_POST['products_purchased']);
+
+        update_user_meta($user_id, 'products_purchased', serialize($products_purchased));
+    }
+}
+add_action('personal_options_update', 'juchheim_save_extra_profile_fields');
+add_action('edit_user_profile_update', 'juchheim_save_extra_profile_fields');
+
+
 // Webhook handler
 function juchheim_stripe_webhook() {
     $payload = @file_get_contents('php://input');
