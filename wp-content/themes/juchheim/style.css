@@ -1403,7 +1403,8 @@ h5 {
 }
 
 #subscriptions ul li button {
-	margin-left:50px;
+	margin-left:40px;
+	cursor:pointer;
 }
 
 
