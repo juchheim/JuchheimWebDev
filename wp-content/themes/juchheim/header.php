@@ -7,6 +7,11 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+    <?php if ( ! is_user_logged_in() ) : ?>
+        <div class="login-button">
+            <a href="<?php echo wp_login_url(); ?>">Login</a>
+        </div>
+    <?php endif; ?>
 	<div class="top-links">
         <a href="#portfolio">Portfolio</a>
         <a href="#payments">Payments</a>
@@ -31,7 +36,7 @@
         window.addEventListener('scroll', function() {
             var scrollPosition = window.pageYOffset;
             var parallax = document.querySelector('.parallax');
-            parallax.style.transform = 'translateY(' + scrollPosition * -0.55 + 'px)';
+            parallax.style.transform = 'translateY(' + scrollPosition * -0.35 + 'px)';
         });
 
 		// JavaScript for smooth scrolling
