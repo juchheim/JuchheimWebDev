@@ -14,7 +14,7 @@
     <?php endif; ?>
     <?php if ( is_user_logged_in() ) : ?>
         <div class="login-button">
-            <a href="/subscriptions">Manage</a>
+            <a href="/subscriptions">Manage Subscriptions</a>
         </div>
     <?php endif; ?>
 	<div class="top-links">
