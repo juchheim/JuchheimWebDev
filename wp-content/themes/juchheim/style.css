@@ -1398,6 +1398,8 @@ h5 {
 
 #subscriptions {
 	margin-top:30px;
+	margin: 0 auto;
+    width: fit-content;
 }
 
 #subscriptions ul li {
