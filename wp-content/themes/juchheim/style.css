@@ -1408,6 +1408,9 @@ h5 {
 	color: white;
 	background-color: rgb(233, 176, 70);
 	font-weight: bold;
+	border-radius: 0px;
+	background-color: rgba(80, 214, 248, 0.1);
+    border: 1px dashed rgba(80, 214, 248, 0.8);
 }
 
 .login-button {
