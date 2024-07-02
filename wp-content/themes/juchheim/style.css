@@ -1396,7 +1396,7 @@ h5 {
 	margin-top:100px;
 }
 
-#subscriptions {
+#subscriptions ul li {
 	text-align: center;
 	color: white;
 }
