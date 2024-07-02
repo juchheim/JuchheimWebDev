@@ -12,6 +12,11 @@
             <a href="<?php echo wp_login_url(); ?>">Login</a>
         </div>
     <?php endif; ?>
+    <?php if ( is_user_logged_in() ) : ?>
+        <div class="login-button">
+            <a href="/subscriptions">Manage</a>
+        </div>
+    <?php endif; ?>
 	<div class="top-links">
         <a href="#portfolio">Portfolio</a>
         <a href="#payments">Payments</a>
