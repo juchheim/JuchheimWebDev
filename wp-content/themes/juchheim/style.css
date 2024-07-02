@@ -1406,10 +1406,9 @@ h5 {
 	margin-left:40px;
 	cursor:pointer;
 	color: white;
-	background-color: rgb(233, 176, 70);
 	border-radius: 0px;
-	background-color: rgba(233, 176, 70, 0.1);
-    border: 1px dashed rgba(233, 176, 70, 0.8);
+	background-color: rgba(80, 214, 248, 0.1);
+    border: 1px dashed rgba(80, 214, 248, 0.8);
 }
 
 .login-button {
