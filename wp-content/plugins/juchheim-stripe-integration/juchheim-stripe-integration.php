@@ -40,9 +40,9 @@ function juchheim_handle_form() {
     if ($form_id === 'web-hosting-form') {
         if ($plan_type === 'monthly') {
             $price_id = 'price_1PTpZBHrZfxkHCcnbQRzh5rL';
-        } elseif ($plan_type === 'new-monthly') {
+        }/* elseif ($plan_type === 'new-monthly') {
             $price_id = 'price_1PXr3XHrZfxkHCcnlNAxUtuK';
-        } else {
+        }*/ else {
             $price_id = 'price_1PTpZoHrZfxkHCcnmwDV0mXm';
         }
         $mode = 'subscription';
@@ -120,7 +120,7 @@ function juchheim_display_forms() {
             <select id="plan" name="plan_type">
                 <option value="monthly">Monthly - $25</option>
                 <option value="annual">Annually - $250</option>
-                <option value="new-monthly">Testing - $0</option>
+        <!--    <option value="new-monthly">Testing - $0</option>   -->
             </select>
 
             <button type="submit">Submit</button>
