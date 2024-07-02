@@ -41,7 +41,7 @@
         window.addEventListener('scroll', function() {
             var scrollPosition = window.pageYOffset;
             var parallax = document.querySelector('.parallax');
-            parallax.style.transform = 'translateY(' + scrollPosition * -0.35 + 'px)';
+            parallax.style.transform = 'translateY(' + scrollPosition * -0.32 + 'px)';
         });
 
 		// JavaScript for smooth scrolling
