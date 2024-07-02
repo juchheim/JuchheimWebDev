@@ -535,6 +535,20 @@ function juchheim_cancel_subscription() {
     try {
         $subscription = \Stripe\Subscription::retrieve($subscription_id);
         $subscription->cancel();
+
+        // Send email notification
+        $user = wp_get_current_user();
+        $to = 'ernest@juchheim.online'; // Replace with your email address
+        $subject = 'Subscription Cancellation Notification';
+        $message = "A subscription has been canceled:\n\n";
+        $message .= "User Name: " . $user->display_name . "\n";
+        $message .= "User Email: " . $user->user_email . "\n";
+        $message .= "Subscription ID: " . $subscription_id . "\n";
+        $message .= "Product Name: " . $subscription->items->data[0]->price->product . "\n";
+        $headers = array('Content-Type: text/plain; charset=UTF-8');
+
+        wp_mail($to, $subject, $message, $headers);
+
         wp_send_json_success('Subscription canceled successfully.');
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage());
@@ -542,6 +556,7 @@ function juchheim_cancel_subscription() {
 }
 add_action('wp_ajax_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
 add_action('wp_ajax_nopriv_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
+
 
 // Redirect Subscribers to Subscriptions Page Upon Login
 function juchheim_redirect_subscribers($redirect_to, $request, $user) {
