@@ -42,7 +42,7 @@
             </div><!-- .header-columns -->
         </header><!-- #masthead -->
         <div class="content">
-            <h1>Crafting Unique Web Experiences for Over 20 Years</h1>
+            <h1>Creating Unique Web Experiences for Over 20 Years</h1>
         </div>
     </div>
     <script>
