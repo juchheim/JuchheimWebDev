@@ -4,7 +4,7 @@ get_header();
 
 <div class="content-area">
     <main id="main" class="site-main">
-        <div class="lead-in"><h1>Crafting Unique Web Experiences for Over 20 Years</h1></div>
+        <div class="lead-in"><h1>Creating Unique Web Experiences for Over 20 Years</h1></div>
 		<p>Ernest Juchheim Web Development specializes in custom WordPress design and development, delivering visually impactful and highly functional websites that align with your brand's objectives.</p>
 		<div class="services-container">
             <div class="services-column">

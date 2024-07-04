@@ -190,4 +190,22 @@ add_action('rest_api_init', function() {
     ));
 });
 
+
+function custom_admin_scripts() {
+    ?>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.querySelectorAll('.wp-menu-name');
+            elements.forEach(function(element) {
+                if (element.textContent.trim() === 'Price') {
+                    element.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <?php
+}
+add_action('admin_footer', 'custom_admin_scripts');
+
+
 ?>
