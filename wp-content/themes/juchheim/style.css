@@ -1144,6 +1144,26 @@ body {
     background: rgba(80, 214, 248, 0.8); /* Using accent color #50d6f8 */
 }
 
+.portfolio-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Adjust spacing between items */
+}
+
+.portfolio-item {
+    width: 300px; /* Adjust width as needed */
+    text-align: center; /* Center align text */
+}
+
+.portfolio-item img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+
+
 h2 {
 	text-align: center;
 	color: rgba(80, 214, 248, 1);
@@ -1471,16 +1491,6 @@ h5 {
 
     .tab {
         padding: 10px 0;
-    }
-
-    .portfolio-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
-    }
-
-    .portfolio-item figcaption {
-        font-size: 0.9em;
-        padding: 5px;
     }
 
     .tabs-container {
