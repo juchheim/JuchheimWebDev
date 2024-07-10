@@ -208,4 +208,12 @@ function custom_admin_scripts() {
 add_action('admin_footer', 'custom_admin_scripts');
 
 
+function enqueue_portfolio_scripts() {
+    // Enqueue your portfolio.js script
+    wp_enqueue_script('portfolio-js', get_template_directory_uri() . '/js/portfolio.js', array('jquery'), null, true);
+}
+add_action('wp_enqueue_scripts', 'enqueue_portfolio_scripts');
+
+
+
 ?>

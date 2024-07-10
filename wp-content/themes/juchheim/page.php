@@ -27,44 +27,77 @@ get_header();
         
         
         <div id="portfolio"></div>
-<h1>Portfolio</h1>
-<?php
-// Fetch the Pods instance for 'portfolio'
-$pods = pods('portfolio', array(
-    'limit' => -1 // Ensure we fetch all entries
-));
+            <h1>Portfolio</h1>
+            <?php
+            // Fetch the Pods instance for 'portfolio'
+            $pods = pods('portfolio', array(
+                'limit' => -1 // Ensure we fetch all entries
+            ));
 
-// Check if there are any entries
-if ($pods->total() > 0) {
-    echo '<div class="portfolio-grid">';
-    
-    // Loop through the Pods entries
-    while ($pods->fetch()) {
-        // Get the image and link fields
-        $image = $pods->field('image');
-        $link = $pods->field('link');
+            // Check if there are any entries
+            if ($pods->total() > 0) {
+                echo '<div class="portfolio-grid">';
+                
+                // Loop through the Pods entries
+                while ($pods->fetch()) {
+                    // Get the image, big_image, link, and caption fields
+                    $image = $pods->field('image');
+                    $big_image = $pods->field('big_image');
+                    $link = $pods->field('link');
+                    $caption = $pods->field('caption');
 
-        // Output the portfolio item
-        echo '<figure class="portfolio-item">';
-        if ($link) {
-            echo '<a href="' . esc_url($link) . '" target="_blank">';
-        }
-        if ($image) {
-            echo '<img src="' . esc_url($image['guid']) . '" alt="' . esc_attr($image['post_title']) . '">';
-        }
-        if ($link) {
-            echo '</a>';
-        }
-        echo '</figure>';
-    }
-    
-    echo '</div>';
-} else {
-    echo '<p>No portfolio items found.</p>';
-}
+                    // Ensure each field is available before using it
+                    if ($image && is_array($image)) {
+                        $image_url = esc_url($image['guid']);
+                        $image_alt = esc_attr($image['post_title']);
+                    } else {
+                        $image_url = '';
+                        $image_alt = '';
+                    }
+
+                    if ($big_image && is_array($big_image)) {
+                        $big_image_url = esc_url($big_image['guid']);
+                    } else {
+                        $big_image_url = '';
+                    }
+
+                    if ($link) {
+                        $link_url = esc_url($link);
+                    } else {
+                        $link_url = '';
+                    }
+
+                    if ($caption) {
+                        $caption_text = esc_html($caption);
+                    } else {
+                        $caption_text = '';
+                    }
+
+                    // Output the portfolio item only if image is available
+                    if ($image_url) {
+                        echo '<figure class="portfolio-item">';
+                        echo '<img src="' . $image_url . '" alt="' . $image_alt . '" class="portfolio-thumb" data-big-image="' . $big_image_url . '" data-link="' . $link_url . '" data-caption="' . $caption_text . '">';
+                        echo '</figure>';
+                    }
+                }
+                
+                echo '</div>';
+            } else {
+                echo '<p>No portfolio items found.</p>';
+            }
+            ?>
+            <!-- Fullscreen Overlay -->
+            <div id="fullscreen-overlay" style="display:none;">
+                <img id="fullscreen-image" src="" alt="">
+                <div id="fullscreen-caption"></div>
+                <button id="view-website-button" style="margin-top: 20px;">View Website</button>
+            </div>
 
 
 
+
+
+        <?php
         if (have_posts()) :
             while (have_posts()) : the_post();
                 the_content();
