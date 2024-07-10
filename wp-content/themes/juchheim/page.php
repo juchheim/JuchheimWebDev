@@ -9,7 +9,7 @@ get_header();
 		<div class="services-container">
             <div class="services-column">
                 <h2>Reliable Web Hosting Services</h2>
-                <p>Keep your website operational and secure with my high-performance web hosting solutions. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
+                <p>Keep your website operational and secure with my high-performance web hosting. I provide dependable hosting services to ensure your site remains fast, secure, and accessible at all times.</p>
                 <a href="#payments" class="btn-hosting">Sign Up Now</a>
             </div>
             <div class="services-column">
