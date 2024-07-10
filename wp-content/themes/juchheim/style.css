@@ -1181,7 +1181,6 @@ body {
 #fullscreen-overlay img {
     max-width: 70%; /* Increase the max-width */
     max-height: 70%; /* Increase the max-height */
-    cursor: pointer;
 }
 
 #fullscreen-caption {
