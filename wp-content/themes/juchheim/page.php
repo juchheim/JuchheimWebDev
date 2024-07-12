@@ -19,6 +19,26 @@ get_header();
             </div>
         </div>
 
+
+        <div class="bio-section">
+            <div class="bio-image">
+                <img src="/wp-content/uploads/2024/07/me.jpeg" alt="Ernest Juchheim">
+            </div>
+            <div class="bio-content">
+                <h2>Ernest Juchheim</h2>
+                <p>Ernest (Trip) Juchheim is a seasoned web developer with a rich background in graphic design and web development. He has 18 years of experience at Hammons and Associates, mastering the art of creating visually appealing and functional websites. Ernest currently serves as the webmaster at the Mississippi Achievement School District.</p>
+                <p>Ernest holds a Bachelor of Science in Graphic Design from Mississippi College. His expertise spans technologies including HTML, PHP, MySQL, JavaScript, WordPress, Photoshop, Illustrator, InDesign, and QuarkXPress. Living near Yazoo City in Mississippi, Ernest has extensive experience throughout the Mississippi Delta region but services clients anywhere.</p>
+                <p>For inquiries, you can reach Ernest at <a href="mailto:ernest@juchheim.online">ernest@juchheim.online</a>.</p>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
         <h3>Know that you can reach me directly at <?php echo '662-897-8747'; ?> when you have a question or to report an issue.</h3>
         <h5>I'm here to help <em>whenever</em> you need assistance.</h5>
 		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
