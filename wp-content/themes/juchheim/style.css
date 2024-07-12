@@ -1540,7 +1540,7 @@ h5 {
 	margin-bottom: 10px;
 	font-size: 2.4em;
 	text-align: left;
-	margin-top:100px;
+	margin-top:110px;
   }
   
   .bio-content .title {
@@ -1552,7 +1552,7 @@ h5 {
   
   .bio-content p {
 	line-height: 1.6;
-	margin-bottom: 15px;
+	margin-bottom: 15px !important;
 	padding:0;
 	margin:0;
 	text-align: left;
