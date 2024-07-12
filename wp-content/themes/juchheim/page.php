@@ -27,7 +27,7 @@ get_header();
             <div class="bio-content">
                 <h2>Ernest Juchheim</h2>
                 <p>Ernest (Trip) Juchheim is a seasoned web developer with a rich background in graphic design and web development. He has 18 years of experience at Hammons and Associates, mastering the art of creating visually appealing and functional websites. Ernest currently serves as the webmaster at the Mississippi Achievement School District.</p>
-                <p>Ernest holds a Bachelor of Science in Graphic Design from Mississippi College. His expertise spans technologies including HTML, PHP, MySQL, JavaScript, WordPress, Photoshop, Illustrator, InDesign, and QuarkXPress. Living near Yazoo City in Mississippi, Ernest has extensive experience throughout the Mississippi Delta region but services clients anywhere.</p>
+                <p>Ernest holds a Bachelor of Science in Graphic Design from Mississippi College. His expertise spans technologies including HTML, PHP, MySQL, JavaScript, WordPress, Photoshop, Illustrator, InDesign, and QuarkXPress. Living near Yazoo City, Mississippi, Ernest has extensive experience throughout the Mississippi Delta but services clients anywhere.</p>
                 <p>For inquiries, you can reach Ernest at <a href="mailto:ernest@juchheim.online">ernest@juchheim.online</a>.</p>
             </div>
         </div>
