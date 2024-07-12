@@ -22,7 +22,7 @@ get_header();
 
         <div class="bio-section">
             <div class="bio-image">
-                <img src="/wp-content/uploads/2024/07/me.jpeg" alt="Ernest Juchheim">
+                <img src="/wp-content/uploads/2024/07/me.jpg" alt="Ernest Juchheim">
             </div>
             <div class="bio-content">
                 <h2>Ernest Juchheim</h2>
