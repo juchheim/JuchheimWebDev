@@ -154,7 +154,7 @@ function juchheim_display_forms() {
             <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
             <input type="hidden" name="form_id" value="custom-form">
 
-            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:juchheim@gmail.com">Email me.</a></p>
+            <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:ernest@juchheim.online">Email me.</a></p>
 
             <label for="custom-name">Name:</label>
             <input type="text" id="custom-name" name="name" required>
