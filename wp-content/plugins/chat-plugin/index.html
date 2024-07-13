@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Chat</title>
-    <script src="http://localhost:4000/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-XbU6DqyyMYOExY5RgVR9Xpgja7NpoNOGn2LV/FhJzH9C9mH8zG8c9a9H8VkLsnZw" crossorigin="anonymous"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,7 +43,7 @@
     <button id="sendButton">Send</button>
 
     <script>
-        const socket = io('http://localhost:4000', {
+        const socket = io('https://juchheim.online', {
             withCredentials: true,
             extraHeaders: {
                 "my-custom-header": "abcd"

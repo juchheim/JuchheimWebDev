@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -9,13 +10,13 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://juchheim.local',
+    origin: 'https://juchheim.online',
     methods: ['GET', 'POST'],
     credentials: true,
   }
 });
 
-app.use(cors({ origin: 'https://juchheim.local', credentials: true }));
+app.use(cors({ origin: 'https://juchheim.online', credentials: true }));
 app.use(cookieParser());
 
 // Disable SSL verification for fetch
@@ -59,7 +60,7 @@ io.on('connection', (socket) => {
     try {
       console.log('Sending data to WordPress API:', postData);
       const fetch = await import('node-fetch');
-      const response = await fetch.default('https://juchheim.local/wp-json/chat/v1/messages', {
+      const response = await fetch.default('https://juchheim.online/wp-json/chat/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
