@@ -1,66 +1,50 @@
-// server.js
 const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
+const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
-const { getWordPressUser } = require('./wordpressAuth');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
+app.use(cookieParser());
+
+const server = https.createServer({
+  key: fs.readFileSync('/path/to/your/private.key'),
+  cert: fs.readFileSync('/path/to/your/certificate.crt')
+}, app);
+
+const io = socketIo(server, {
   cors: {
-    origin: 'https://juchheim.online',
-    methods: ['GET', 'POST'],
-    credentials: true,
+    origin: "https://juchheim.online",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-app.use(cors({ origin: 'https://juchheim.online', credentials: true }));
-app.use(cookieParser());
-
-// Disable SSL verification for fetch
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-io.use(async (socket, next) => {
+io.use((socket, next) => {
   const cookies = socket.handshake.headers.cookie;
-  console.log('Headers:', socket.handshake.headers);
-  console.log('Cookies received:', cookies);
   if (cookies) {
-    const user = await getWordPressUser(cookies);
-    if (user) {
-      socket.user = user;
-      console.log('Authenticated user:', user);
-      return next();
-    } else {
-      console.log('User not authenticated');
-    }
+    next();
   } else {
-    console.log('No cookies found');
+    next(new Error('Authentication error'));
   }
-  next(new Error('Authentication error'));
 });
 
 io.on('connection', (socket) => {
-  console.log('New client connected with user:', socket.user ? socket.user.username : 'unauthenticated');
+  console.log('New client connected');
 
   socket.on('sendMessage', async (data) => {
-    if (!socket.user) {
-      socket.emit('errorMessage', 'User not authenticated');
-      return;
-    }
-    console.log(`Received message: ${data.message} from user: ${socket.user.username} for chat: ${data.chatId}`);
+    console.log(`Received message: ${data.message} from user: ${data.userId} for chat: ${data.chatId}`);
 
     const postData = {
       chat_id: data.chatId,
       message: data.message,
-      user_id: socket.user.id,
+      user_id: data.userId,
     };
 
     try {
       console.log('Sending data to WordPress API:', postData);
-      const fetch = await import('node-fetch');
-      const response = await fetch.default('https://juchheim.online/wp-json/chat/v1/messages', {
+      const response = await fetch('https://juchheim.online/wp-json/chat/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +53,7 @@ io.on('connection', (socket) => {
       });
       const result = await response.json();
       console.log('Message saved:', result);
-      socket.emit('receiveMessage', { ...data, userId: socket.user.username });
+      socket.emit('receiveMessage', data);
     } catch (error) {
       console.error('Error during fetch operation:', error);
     }

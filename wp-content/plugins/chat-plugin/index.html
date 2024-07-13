@@ -3,99 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Chat</title>
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-XbU6DqyyMYOExY5RgVR9Xpgja7NpoNOGn2LV/FhJzH9C9mH8zG8c9a9H8VkLsnZw" crossorigin="anonymous"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        #chat {
-            width: 90%;
-            max-width: 600px;
-            height: 80vh;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: scroll;
-        }
-        #messageInput {
-            width: 90%;
-            max-width: 600px;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        #sendButton {
-            padding: 10px 20px;
-        }
-    </style>
+    <title>Chat Application</title>
 </head>
 <body>
-    <div id="chat"></div>
-    <input type="text" id="messageInput" placeholder="Enter your message" />
-    <button id="sendButton">Send</button>
+    <div id="chat-box"></div>
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button id="send-button">Send</button>
 
+    <!-- Include the Socket.IO client library -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
-        const socket = io('https://juchheim.online', {
-            withCredentials: true,
-            extraHeaders: {
-                "my-custom-header": "abcd"
-            }
+        // Connect to the Socket.IO server
+        const socket = io('https://juchheim.online:4000', {
+            withCredentials: true
         });
 
-        const chat = document.getElementById('chat');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-
-        // Function to append message to chat
-        const appendMessage = (message) => {
-            const messageElement = document.createElement('div');
-            messageElement.innerText = `${message.userId}: ${message.message}`;
-            chat.appendChild(messageElement);
-        };
-
-        // Listen for messages from the server
-        socket.on('receiveMessage', (message) => {
-            console.log('Message received from server:', message);
-            appendMessage(message);
-        });
-
-        // Listen for errors
-        socket.on('errorMessage', (error) => {
-            alert(error);
-        });
-
-        // Send message to the server
-        sendButton.addEventListener('click', () => {
-            const message = messageInput.value;
-            const chatId = 1;  // Ensure this matches the inserted chat session ID
-            console.log(`Sending message: ${message}`);
-            socket.emit('sendMessage', { chatId, message });
-            messageInput.value = '';
-        });
-
-        // Log connection status
-        socket.on('connect', () => {
-            console.log('Connected to server');
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from server');
-        });
-
+        // Handle connection error
         socket.on('connect_error', (error) => {
             console.error('Connection error:', error);
         });
 
-        socket.on('error', (error) => {
-            console.error('Error:', error);
+        // Send message to the server
+        document.getElementById('send-button').addEventListener('click', () => {
+            const message = document.getElementById('message-input').value;
+            socket.emit('sendMessage', { chatId: 1, message: message, userId: 1 });
+        });
+
+        // Receive message from the server
+        socket.on('receiveMessage', (data) => {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${data.username}: ${data.message}`;
+            chatBox.appendChild(messageElement);
         });
     </script>
 </body>
