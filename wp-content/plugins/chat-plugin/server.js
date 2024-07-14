@@ -8,7 +8,6 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const app = express();
 app.use(cookieParser());
 
-// HTTPS server with SSL certificate
 const server = https.createServer({
   key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'),
   cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
@@ -22,29 +21,53 @@ const io = socketIo(server, {
   }
 });
 
-// Middleware to check for cookies (authentication)
-io.use((socket, next) => {
+// Middleware to verify WordPress user authentication
+io.use(async (socket, next) => {
   const cookies = socket.handshake.headers.cookie;
-  console.log('Cookies received:', cookies);
-  if (cookies) {
+  if (!cookies) {
+    console.log('No cookies found');
+    return next(new Error('Authentication error'));
+  }
+
+  const wpLoggedInCookie = cookies.split(';').find(c => c.trim().startsWith('wordpress_logged_in_'));
+  if (!wpLoggedInCookie) {
+    console.log('No WordPress authentication cookie found');
+    return next(new Error('Authentication error'));
+  }
+
+  const [cookieName, cookieValue] = wpLoggedInCookie.trim().split('=');
+
+  try {
+    const response = await fetch('https://juchheim.online/wp-json/wp/v2/users/me', {
+      headers: {
+        'Cookie': `${cookieName}=${cookieValue}`
+      }
+    });
+
+    if (!response.ok) {
+      console.log('WordPress authentication failed');
+      return next(new Error('Authentication error'));
+    }
+
+    const user = await response.json();
+    socket.user = user;
     next();
-  } else {
+  } catch (error) {
+    console.error('Error verifying WordPress authentication:', error);
     next(new Error('Authentication error'));
   }
 });
 
-// Handle socket connection
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  console.log('New client connected:', socket.user);
 
-  // Handle incoming messages
   socket.on('sendMessage', async (data) => {
-    console.log(`Received message: ${data.message} from user: ${data.userId} for chat: ${data.chatId}`);
+    console.log(`Received message: ${data.message} from user: ${socket.user.id} for chat: ${data.chatId}`);
 
     const postData = {
       chat_id: data.chatId,
       message: data.message,
-      user_id: data.userId,
+      user_id: socket.user.id,
     };
 
     try {
@@ -59,19 +82,16 @@ io.on('connection', (socket) => {
       const result = await response.json();
       console.log('Message saved:', result);
       socket.broadcast.emit('receiveMessage', data);
-      console.log('Broadcasted message to clients:', data);
     } catch (error) {
       console.error('Error during fetch operation:', error);
     }
   });
 
-  // Handle client disconnect
   socket.on('disconnect', () => {
-    console.log('Client disconnected');
+    console.log('Client disconnected:', socket.user);
   });
 });
 
-// Start the server
 server.listen(4000, () => {
   console.log('Server running on port 4000');
 });
