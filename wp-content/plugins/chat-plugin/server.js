@@ -21,7 +21,6 @@ const io = socketIo(server, {
   }
 });
 
-// Middleware to check cookies
 io.use((socket, next) => {
   const cookies = socket.handshake.headers.cookie;
   if (cookies) {
