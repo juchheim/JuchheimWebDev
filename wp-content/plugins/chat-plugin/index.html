@@ -12,7 +12,7 @@
   <button onclick="sendMessage()">Send</button>
 
   <script>
-    const socket = io('https://juchheim.online:4000', {
+    const socket = io('wss://juchheim.online:4000', {
       withCredentials: true,
       extraHeaders: {
         "my-custom-header": "abcd"
