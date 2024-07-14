@@ -1,5 +1,6 @@
 const express = require('express');
-const http = require('http'); // Using http instead of https for simplicity
+const https = require('https');
+const fs = require('fs');
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
@@ -7,7 +8,11 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const app = express();
 app.use(cookieParser());
 
-const server = http.createServer(app);
+const server = https.createServer({
+  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'), // Update with your actual key path
+  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt') // Update with your actual certificate path
+}, app);
+
 const io = socketIo(server, {
   cors: {
     origin: "https://juchheim.online",
