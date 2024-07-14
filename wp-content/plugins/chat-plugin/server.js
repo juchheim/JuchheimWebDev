@@ -13,26 +13,20 @@ const server = https.createServer({
   cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
 }, app);
 
-const io = socketIo(server, {
-  cors: {
-    origin: "https://juchheim.online",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
+const io = socketIo(server);
 
 // Middleware to verify WordPress user authentication
 io.use(async (socket, next) => {
   const cookies = socket.handshake.headers.cookie;
   if (!cookies) {
     console.log('No cookies found');
-    return next(new Error('Authentication error'));
+    return next(new Error('Authentication error: No cookies found'));
   }
 
   const wpLoggedInCookie = cookies.split(';').find(c => c.trim().startsWith('wordpress_logged_in_'));
   if (!wpLoggedInCookie) {
     console.log('No WordPress authentication cookie found');
-    return next(new Error('Authentication error'));
+    return next(new Error('Authentication error: No WordPress authentication cookie found'));
   }
 
   const [cookieName, cookieValue] = wpLoggedInCookie.trim().split('=');
@@ -46,15 +40,16 @@ io.use(async (socket, next) => {
 
     if (!response.ok) {
       console.log('WordPress authentication failed');
-      return next(new Error('Authentication error'));
+      return next(new Error('Authentication error: WordPress authentication failed'));
     }
 
     const user = await response.json();
     socket.user = user;
+    console.log(`User authenticated: ${user.id} - ${user.name}`);
     next();
   } catch (error) {
     console.error('Error verifying WordPress authentication:', error);
-    next(new Error('Authentication error'));
+    next(new Error('Authentication error: Error verifying WordPress authentication'));
   }
 });
 
@@ -81,7 +76,7 @@ io.on('connection', (socket) => {
       });
       const result = await response.json();
       console.log('Message saved:', result);
-      socket.broadcast.emit('receiveMessage', data);
+      socket.broadcast.emit('receiveMessage', { ...data, userId: socket.user.id, username: socket.user.name });
     } catch (error) {
       console.error('Error during fetch operation:', error);
     }
