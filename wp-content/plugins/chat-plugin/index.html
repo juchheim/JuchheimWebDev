@@ -8,6 +8,7 @@
 </head>
 <body>
   <div id="chat-box"></div>
+  <div id="user-info"></div>
   <input type="text" id="message-input">
   <button onclick="sendMessage()">Send</button>
 
@@ -21,6 +22,12 @@
 
     socket.on('connect', () => {
       console.log('Connected to server');
+    });
+
+    socket.on('userAuthenticated', (data) => {
+      console.log('User authenticated:', data.username);
+      const userInfo = document.getElementById('user-info');
+      userInfo.textContent = `Logged in as: ${data.username}`;
     });
 
     socket.on('receiveMessage', (data) => {

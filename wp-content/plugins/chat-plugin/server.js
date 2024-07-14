@@ -63,6 +63,9 @@ io.use(async (socket, next) => {
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.user);
+  
+  // Emit the username to the client
+  socket.emit('userAuthenticated', { username: socket.user.name });
 
   socket.on('sendMessage', async (data) => {
     console.log(`Received message: ${data.message} from user: ${socket.user.id} for chat: ${data.chatId}`);
