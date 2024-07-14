@@ -13,26 +13,29 @@
         let ws;
 
         const connectWebSocket = () => {
-            ws = new WebSocket('wss://localhost:4000'); // Local WebSocket server URL
+            ws = new WebSocket('wss://juchheim.local:4000');
 
-            ws.onopen = () => {
-                console.log('Connected to server');
-            };
+            ws.onopen = () => { console.log('Connected to server'); };
 
             ws.onmessage = (event) => {
-                console.log('Message received:', event.data);
-                const messageElement = document.createElement('div');
-                messageElement.textContent = event.data;
-                document.getElementById('messages').appendChild(messageElement);
+                const data = JSON.parse(event.data);
+                console.log('Message received:', data);
+                if (data.type === 'auth') {
+                    if (data.success) {
+                        document.getElementById('username').textContent = `Logged in as: ${data.username}`;
+                    } else {
+                        alert('Authentication required');
+                    }
+                } else if (data.type === 'message') {
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = data.message;
+                    document.getElementById('messages').appendChild(messageElement);
+                }
             };
 
-            ws.onclose = () => {
-                console.log('Disconnected from server');
-            };
+            ws.onclose = () => { console.log('Disconnected from server'); };
 
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
+            ws.onerror = (error) => { console.error('WebSocket error:', error); };
         };
 
         const sendMessage = () => {
@@ -45,9 +48,7 @@
             }
         };
 
-        window.onload = () => {
-            connectWebSocket();
-        };
+        window.onload = () => { connectWebSocket(); };
     </script>
 </body>
 </html>
