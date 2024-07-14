@@ -12,17 +12,20 @@
   <button onclick="sendMessage()">Send</button>
 
   <script>
-    const socket = io('wss://juchheim.online:4000', {
+    // Connect to the WebSocket server over HTTPS
+    const socket = io('https://juchheim.online:4000', {
       withCredentials: true,
       extraHeaders: {
         "my-custom-header": "abcd"
       }
     });
 
+    // Log connection status
     socket.on('connect', () => {
       console.log('Connected to server');
     });
 
+    // Handle incoming messages
     socket.on('receiveMessage', (data) => {
       console.log('Message received:', data);
       const chatBox = document.getElementById('chat-box');
@@ -32,10 +35,12 @@
       console.log('Message appended to chat box');
     });
 
+    // Log disconnection status
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
     });
 
+    // Send message to the server
     function sendMessage() {
       const messageInput = document.getElementById('message-input');
       const message = messageInput.value;
@@ -55,12 +60,19 @@
       console.log('Message appended to chat box');
     }
 
+    // Log connection errors
     socket.on('connect_error', (error) => {
       console.error('Connection error:', error.message);
     });
 
+    // Log general socket errors
     socket.on('error', (error) => {
       console.error('Socket error:', error);
+    });
+
+    // Log custom error messages from the server
+    socket.on('error', (error) => {
+      console.error('Server error:', error.message);
     });
   </script>
 </body>

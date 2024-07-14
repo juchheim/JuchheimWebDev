@@ -8,6 +8,7 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const app = express();
 app.use(cookieParser());
 
+// HTTPS server with SSL certificate
 const server = https.createServer({
   key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'),
   cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
@@ -21,9 +22,22 @@ const io = socketIo(server, {
   }
 });
 
+// Middleware to check for cookies (authentication)
+io.use((socket, next) => {
+  const cookies = socket.handshake.headers.cookie;
+  console.log('Cookies received:', cookies);
+  if (cookies) {
+    next();
+  } else {
+    next(new Error('Authentication error'));
+  }
+});
+
+// Handle socket connection
 io.on('connection', (socket) => {
   console.log('New client connected');
 
+  // Handle incoming messages
   socket.on('sendMessage', async (data) => {
     console.log(`Received message: ${data.message} from user: ${data.userId} for chat: ${data.chatId}`);
 
@@ -51,11 +65,13 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Handle client disconnect
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
 
+// Start the server
 server.listen(4000, () => {
   console.log('Server running on port 4000');
 });
