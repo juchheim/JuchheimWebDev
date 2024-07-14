@@ -7,34 +7,42 @@
 </head>
 <body>
     <div id="chat-box"></div>
-    <input type="text" id="message-input" placeholder="Type a message...">
+    <input type="text" id="message-input" placeholder="Type a message">
     <button id="send-button">Send</button>
 
-    <!-- Include the Socket.IO client library -->
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.1.3/socket.io.min.js" integrity="sha384-xxx" crossorigin="anonymous"></script>
     <script>
-        // Connect to the Socket.IO server
         const socket = io('https://juchheim.online:4000', {
-            withCredentials: true
+            withCredentials: true,
+            extraHeaders: {
+                "my-custom-header": "abcd"
+            }
         });
 
-        // Handle connection error
-        socket.on('connect_error', (error) => {
-            console.error('Connection error:', error);
+        socket.on('connect', () => {
+            console.log('Connected to server');
         });
 
-        // Send message to the server
-        document.getElementById('send-button').addEventListener('click', () => {
-            const message = document.getElementById('message-input').value;
-            socket.emit('sendMessage', { chatId: 1, message: message, userId: 1 });
-        });
-
-        // Receive message from the server
         socket.on('receiveMessage', (data) => {
             const chatBox = document.getElementById('chat-box');
             const messageElement = document.createElement('div');
-            messageElement.textContent = `${data.username}: ${data.message}`;
+            messageElement.textContent = `${data.userId}: ${data.message}`;
             chatBox.appendChild(messageElement);
+        });
+
+        document.getElementById('send-button').addEventListener('click', () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            socket.emit('sendMessage', {
+                chatId: 1, // Change as needed
+                userId: 'user', // Replace with actual user ID
+                message: message
+            });
+            messageInput.value = '';
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection error:', err.message);
         });
     </script>
 </body>
