@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
       });
       const result = await response.json();
       console.log('Message saved:', result);
-      socket.emit('receiveMessage', data); // Emit the received message back to the client
+      socket.emit('receiveMessage', data);
       console.log('Emitted message to client:', data);
     } catch (error) {
       console.error('Error during fetch operation:', error);
@@ -67,9 +67,6 @@ io.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
-
-// Serve static files
-app.use(express.static('public'));
 
 server.listen(4000, () => {
   console.log('Server running on port 4000');
