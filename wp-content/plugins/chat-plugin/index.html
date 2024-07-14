@@ -14,10 +14,7 @@
 
   <script>
     const socket = io('https://juchheim.online:4000', {
-      withCredentials: true,
-      extraHeaders: {
-        "my-custom-header": "abcd"
-      }
+      withCredentials: true
     });
 
     socket.on('connect', () => {

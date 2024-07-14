@@ -61,10 +61,11 @@ io.use(async (socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.user);
+  console.log('New client connected');
 
   if (socket.user) {
     socket.emit('userAuthenticated', { username: socket.user.name });
+    console.log('User authenticated:', socket.user.name);
   } else {
     console.log('User is not authenticated');
   }
@@ -101,7 +102,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.user);
+    console.log('Client disconnected:', socket.user ? socket.user.name : 'unknown user');
   });
 });
 
