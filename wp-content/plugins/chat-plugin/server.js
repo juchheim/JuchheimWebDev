@@ -25,8 +25,10 @@ const io = socketIo(server, {
 io.use((socket, next) => {
   const cookies = socket.handshake.headers.cookie;
   if (cookies) {
+    console.log('Cookies received:', cookies);
     next();
   } else {
+    console.log('No cookies found');
     next(new Error('Authentication error'));
   }
 });

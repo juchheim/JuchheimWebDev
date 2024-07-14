@@ -24,6 +24,7 @@
     });
 
     socket.on('receiveMessage', (data) => {
+      console.log('Message received:', data);
       const chatBox = document.getElementById('chat-box');
       const message = document.createElement('p');
       message.textContent = `${data.userId}: ${data.message}`;
@@ -40,7 +41,9 @@
       const userId = '1'; // Replace with actual user ID from WordPress
       const chatId = '1'; // Replace with actual chat ID
 
+      console.log('Sending message:', message);
       socket.emit('sendMessage', { message, userId, chatId });
+      messageInput.value = ''; // Clear the input field
     }
 
     socket.on('connect_error', (error) => {
