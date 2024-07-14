@@ -1,6 +1,5 @@
 const express = require('express');
-const http = require('http');
-const fs = require('fs');
+const http = require('http'); // Using http instead of https for simplicity
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
