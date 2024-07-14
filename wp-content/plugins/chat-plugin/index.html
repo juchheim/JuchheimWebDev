@@ -29,6 +29,7 @@
       const message = document.createElement('p');
       message.textContent = `${data.userId}: ${data.message}`;
       chatBox.appendChild(message);
+      console.log('Message appended to chat box');
     });
 
     socket.on('disconnect', () => {
@@ -43,11 +44,16 @@
 
       console.log('Sending message:', message);
       socket.emit('sendMessage', { message, userId, chatId });
+      console.log('Message sent:', { message, userId, chatId });
       messageInput.value = ''; // Clear the input field
     }
 
     socket.on('connect_error', (error) => {
       console.error('Connection error:', error.message);
+    });
+
+    socket.on('error', (error) => {
+      console.error('Socket error:', error);
     });
   </script>
 </body>

@@ -9,8 +9,8 @@ const app = express();
 app.use(cookieParser());
 
 const server = https.createServer({
-  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'), // Update with your actual key path
-  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt') // Update with your actual certificate path
+  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'),
+  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
 }, app);
 
 const io = socketIo(server, {
@@ -23,6 +23,7 @@ const io = socketIo(server, {
 
 io.use((socket, next) => {
   const cookies = socket.handshake.headers.cookie;
+  console.log('Socket Handshake Headers:', socket.handshake.headers);
   if (cookies) {
     console.log('Cookies received:', cookies);
     next();
@@ -55,7 +56,8 @@ io.on('connection', (socket) => {
       });
       const result = await response.json();
       console.log('Message saved:', result);
-      socket.emit('receiveMessage', data);
+      socket.emit('receiveMessage', data); // Emit the received message back to the client
+      console.log('Emitted message to client:', data);
     } catch (error) {
       console.error('Error during fetch operation:', error);
     }
