@@ -15,12 +15,11 @@ const server = https.createServer({
 
 const io = socketIo(server);
 
-// Middleware to verify WordPress user authentication
 io.use(async (socket, next) => {
   console.log('Verifying user authentication...');
   const cookies = socket.handshake.headers.cookie;
   console.log('Cookies received:', cookies);
-  
+
   if (!cookies) {
     console.log('No cookies found');
     return next(new Error('Authentication error: No cookies found'));
@@ -28,7 +27,7 @@ io.use(async (socket, next) => {
 
   const wpLoggedInCookie = cookies.split(';').find(c => c.trim().startsWith('wordpress_logged_in_'));
   console.log('WordPress cookie found:', wpLoggedInCookie);
-  
+
   if (!wpLoggedInCookie) {
     console.log('No WordPress authentication cookie found');
     return next(new Error('Authentication error: No WordPress authentication cookie found'));
@@ -63,11 +62,19 @@ io.use(async (socket, next) => {
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.user);
-  
-  // Emit the username to the client
-  socket.emit('userAuthenticated', { username: socket.user.name });
+
+  if (socket.user) {
+    socket.emit('userAuthenticated', { username: socket.user.name });
+  } else {
+    console.log('User is not authenticated');
+  }
 
   socket.on('sendMessage', async (data) => {
+    if (!socket.user) {
+      console.log('Unauthenticated user tried to send a message');
+      return;
+    }
+
     console.log(`Received message: ${data.message} from user: ${socket.user.id} for chat: ${data.chatId}`);
 
     const postData = {
