@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const fs = require('fs');
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
@@ -60,8 +61,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve Socket.IO client files
-app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io/client-dist'));
+// Serve static files
+app.use(express.static('public'));
 
 server.listen(4000, () => {
   console.log('Server running on port 4000');
