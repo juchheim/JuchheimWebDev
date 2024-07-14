@@ -1,3 +1,0 @@
-[14-Jul-2024 17:07:17 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): Connection refused in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/class-wpdb.php on line 1987
-[14-Jul-2024 17:07:19 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): Connection refused in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/class-wpdb.php on line 1987
-[14-Jul-2024 17:07:19 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): Connection refused in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/class-wpdb.php on line 1987
