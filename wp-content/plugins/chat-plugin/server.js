@@ -9,8 +9,8 @@ const app = express();
 app.use(cookieParser());
 
 const server = https.createServer({
-  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'), // Update with your actual key path
-  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt') // Update with your actual certificate path
+  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'),
+  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
 }, app);
 
 const io = socketIo(server, {
