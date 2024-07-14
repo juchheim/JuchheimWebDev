@@ -17,19 +17,26 @@ const io = socketIo(server);
 
 // Middleware to verify WordPress user authentication
 io.use(async (socket, next) => {
+  console.log('Verifying user authentication...');
   const cookies = socket.handshake.headers.cookie;
+  console.log('Cookies received:', cookies);
+  
   if (!cookies) {
     console.log('No cookies found');
     return next(new Error('Authentication error: No cookies found'));
   }
 
   const wpLoggedInCookie = cookies.split(';').find(c => c.trim().startsWith('wordpress_logged_in_'));
+  console.log('WordPress cookie found:', wpLoggedInCookie);
+  
   if (!wpLoggedInCookie) {
     console.log('No WordPress authentication cookie found');
     return next(new Error('Authentication error: No WordPress authentication cookie found'));
   }
 
   const [cookieName, cookieValue] = wpLoggedInCookie.trim().split('=');
+  console.log('Cookie Name:', cookieName);
+  console.log('Cookie Value:', cookieValue);
 
   try {
     const response = await fetch('https://juchheim.online/wp-json/wp/v2/users/me', {
@@ -38,6 +45,7 @@ io.use(async (socket, next) => {
       }
     });
 
+    console.log('Response status:', response.status);
     if (!response.ok) {
       console.log('WordPress authentication failed');
       return next(new Error('Authentication error: WordPress authentication failed'));
