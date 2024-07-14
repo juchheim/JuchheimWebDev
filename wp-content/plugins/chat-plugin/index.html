@@ -7,10 +7,7 @@
   <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
 </head>
 <body>
-  <div id="chat-box"></div>
   <div id="user-info"></div>
-  <input type="text" id="message-input">
-  <button onclick="sendMessage()">Send</button>
 
   <script>
     const socket = io('https://juchheim.online:4000', {
@@ -27,32 +24,9 @@
       userInfo.textContent = `Logged in as: ${data.username}`;
     });
 
-    socket.on('receiveMessage', (data) => {
-      console.log('Message received:', data);
-      const chatBox = document.getElementById('chat-box');
-      const message = document.createElement('p');
-      message.textContent = `${data.username}: ${data.message}`;
-      chatBox.appendChild(message);
-      console.log('Message appended to chat box');
-    });
-
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
     });
-
-    function sendMessage() {
-      const messageInput = document.getElementById('message-input');
-      const message = messageInput.value;
-
-      socket.emit('sendMessage', { message, chatId: '1' });
-
-      const chatBox = document.getElementById('chat-box');
-      const newMessage = document.createElement('p');
-      newMessage.textContent = `You: ${message}`;
-      chatBox.appendChild(newMessage);
-      messageInput.value = '';
-      console.log('Message appended to chat box');
-    }
 
     socket.on('connect_error', (error) => {
       console.error('Connection error:', error.message);

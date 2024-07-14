@@ -70,37 +70,6 @@ io.on('connection', (socket) => {
     console.log('User is not authenticated');
   }
 
-  socket.on('sendMessage', async (data) => {
-    if (!socket.user) {
-      console.log('Unauthenticated user tried to send a message');
-      return;
-    }
-
-    console.log(`Received message: ${data.message} from user: ${socket.user.id} for chat: ${data.chatId}`);
-
-    const postData = {
-      chat_id: data.chatId,
-      message: data.message,
-      user_id: socket.user.id,
-    };
-
-    try {
-      console.log('Sending data to WordPress API:', postData);
-      const response = await fetch('https://juchheim.online/wp-json/chat/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
-      const result = await response.json();
-      console.log('Message saved:', result);
-      socket.broadcast.emit('receiveMessage', { ...data, userId: socket.user.id, username: socket.user.name });
-    } catch (error) {
-      console.error('Error during fetch operation:', error);
-    }
-  });
-
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.user ? socket.user.name : 'unknown user');
   });
