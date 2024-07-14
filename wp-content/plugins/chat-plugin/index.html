@@ -46,6 +46,13 @@
       socket.emit('sendMessage', { message, userId, chatId });
       console.log('Message sent:', { message, userId, chatId });
       messageInput.value = ''; // Clear the input field
+
+      // Directly append the message to the chat box for instant feedback
+      const chatBox = document.getElementById('chat-box');
+      const newMessage = document.createElement('p');
+      newMessage.textContent = `You: ${message}`;
+      chatBox.appendChild(newMessage);
+      console.log('Message appended to chat box');
     }
 
     socket.on('connect_error', (error) => {
