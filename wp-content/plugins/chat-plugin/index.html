@@ -12,32 +12,38 @@
   <div id="chat-box"></div>
 
   <script>
-    const ws = new WebSocket('wss://juchheim.online:4000');
+    let ws;
 
-    ws.onopen = () => {
-      console.log('Connected to server');
-    };
+    const connectWebSocket = () => {
+      ws = new WebSocket('wss://juchheim.online:4000');
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'auth' && data.success) {
-        console.log('User authenticated:', data.username);
-        const userInfo = document.getElementById('user-info');
-        userInfo.textContent = `Logged in as: ${data.username}`;
-      } else if (data.type === 'message') {
-        const chatBox = document.getElementById('chat-box');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = data.message;
-        chatBox.appendChild(messageElement);
-      }
-    };
+      ws.onopen = () => {
+        console.log('Connected to server');
+      };
 
-    ws.onclose = (event) => {
-      console.log('Disconnected from server:', event.reason);
-    };
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'auth' && data.success) {
+          console.log('User authenticated:', data.username);
+          const userInfo = document.getElementById('user-info');
+          userInfo.textContent = `Logged in as: ${data.username}`;
+        } else if (data.type === 'message') {
+          const chatBox = document.getElementById('chat-box');
+          const messageElement = document.createElement('div');
+          messageElement.textContent = data.message;
+          chatBox.appendChild(messageElement);
+        }
+      };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      ws.onclose = (event) => {
+        console.log('Disconnected from server:', event.reason);
+        // Try to reconnect after a delay
+        setTimeout(connectWebSocket, 1000);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
     };
 
     const sendMessage = () => {
@@ -45,12 +51,19 @@
       const message = messageInput.value;
 
       if (message.trim() !== '') {
-        ws.send(message);
-        messageInput.value = '';
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(message);
+          messageInput.value = '';
+        } else {
+          console.log('WebSocket is not open. ReadyState:', ws.readyState);
+        }
       }
     };
 
     document.getElementById('send-button').addEventListener('click', sendMessage);
+
+    // Initialize WebSocket connection
+    connectWebSocket();
   </script>
 </body>
 </html>
