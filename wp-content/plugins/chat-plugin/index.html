@@ -1,69 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Application</title>
+    <title>Chat Plugin</title>
 </head>
 <body>
-  <div id="user-info"></div>
-  <input type="text" id="message-input" placeholder="Type your message here">
-  <button id="send-button">Send</button>
-  <div id="chat-box"></div>
+    <div id="username"></div>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
 
-  <script>
-    let ws;
+    <script>
+        let ws;
 
-    const connectWebSocket = () => {
-      ws = new WebSocket('wss://juchheim.online:4000');
+        const connectWebSocket = () => {
+            ws = new WebSocket('wss://localhost:4000'); // Local WebSocket server URL
 
-      ws.onopen = () => {
-        console.log('Connected to server');
-      };
+            ws.onopen = () => {
+                console.log('Connected to server');
+            };
 
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'auth' && data.success) {
-          console.log('User authenticated:', data.username);
-          const userInfo = document.getElementById('user-info');
-          userInfo.textContent = `Logged in as: ${data.username}`;
-        } else if (data.type === 'message') {
-          const chatBox = document.getElementById('chat-box');
-          const messageElement = document.createElement('div');
-          messageElement.textContent = data.message;
-          chatBox.appendChild(messageElement);
-        }
-      };
+            ws.onmessage = (event) => {
+                console.log('Message received:', event.data);
+                const messageElement = document.createElement('div');
+                messageElement.textContent = event.data;
+                document.getElementById('messages').appendChild(messageElement);
+            };
 
-      ws.onclose = (event) => {
-        console.log('Disconnected from server:', event.reason);
-        // Try to reconnect after a delay
-        setTimeout(connectWebSocket, 1000);
-      };
+            ws.onclose = () => {
+                console.log('Disconnected from server');
+            };
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-    };
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        };
 
-    const sendMessage = () => {
-      const messageInput = document.getElementById('message-input');
-      const message = messageInput.value;
+        const sendMessage = () => {
+            const message = document.getElementById('messageInput').value;
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(message);
+                document.getElementById('messageInput').value = '';
+            } else {
+                console.error('WebSocket is not open. ReadyState:', ws.readyState);
+            }
+        };
 
-      if (message.trim() !== '') {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(message);
-          messageInput.value = '';
-        } else {
-          console.log('WebSocket is not open. ReadyState:', ws.readyState);
-        }
-      }
-    };
-
-    document.getElementById('send-button').addEventListener('click', sendMessage);
-
-    // Initialize WebSocket connection
-    connectWebSocket();
-  </script>
+        window.onload = () => {
+            connectWebSocket();
+        };
+    </script>
 </body>
 </html>

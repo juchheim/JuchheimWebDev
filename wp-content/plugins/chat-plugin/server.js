@@ -8,9 +8,9 @@ app.use(express.static(__dirname));
 
 // Create HTTPS server
 const server = https.createServer({
-  key: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.key'),
-  cert: fs.readFileSync('/home/1260594.cloudwaysapps.com/whtqgbwgsb/private_html/server.crt')
-});
+  key: fs.readFileSync(`${__dirname}/private.key`), // Adjust path if needed
+  cert: fs.readFileSync(`${__dirname}/certificate.crt`) // Adjust path if needed
+}, app);
 
 // Initialize WebSocket server instance
 const wss = new WebSocket.Server({ server });

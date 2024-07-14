@@ -3,3 +3,5 @@ wp-config.php
 /vendor
 debug.log
 wp-content/debug.log
+wp-content/plugins/chat-plugin/certificate.crt
+wp-content/plugins/chat-plugin/private.key
