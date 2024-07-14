@@ -16,7 +16,6 @@ const server = https.createServer({
 const io = socketIo(server);
 
 io.use(async (socket, next) => {
-  console.log('Verifying user authentication...');
   const cookies = socket.handshake.headers.cookie;
   console.log('Cookies received:', cookies);
 

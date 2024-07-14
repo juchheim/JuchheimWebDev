@@ -8,6 +8,9 @@
 </head>
 <body>
   <div id="user-info"></div>
+  <input type="text" id="message-input" placeholder="Type your message here">
+  <button id="send-button">Send</button>
+  <div id="chat-box"></div>
 
   <script>
     const socket = io('https://juchheim.online:4000', {
@@ -35,6 +38,18 @@
     socket.on('error', (error) => {
       console.error('Socket error:', error);
     });
+
+    const sendMessage = () => {
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value;
+
+      if (message.trim() !== '') {
+        socket.emit('sendMessage', { message });
+        messageInput.value = '';
+      }
+    };
+
+    document.getElementById('send-button').addEventListener('click', sendMessage);
   </script>
 </body>
 </html>
