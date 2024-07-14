@@ -2,3 +2,4 @@ wp-config.php
 /.env
 /vendor
 debug.log
+wp-content/debug.log
