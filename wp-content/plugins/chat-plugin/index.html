@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Application</title>
-  <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
 </head>
 <body>
   <div id="user-info"></div>
@@ -13,38 +12,40 @@
   <div id="chat-box"></div>
 
   <script>
-    const socket = io('https://juchheim.online:4000', {
-      withCredentials: true
-    });
+    const ws = new WebSocket('wss://juchheim.online:4000');
 
-    socket.on('connect', () => {
+    ws.onopen = () => {
       console.log('Connected to server');
-    });
+    };
 
-    socket.on('userAuthenticated', (data) => {
-      console.log('User authenticated:', data.username);
-      const userInfo = document.getElementById('user-info');
-      userInfo.textContent = `Logged in as: ${data.username}`;
-    });
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'auth' && data.success) {
+        console.log('User authenticated:', data.username);
+        const userInfo = document.getElementById('user-info');
+        userInfo.textContent = `Logged in as: ${data.username}`;
+      } else if (data.type === 'message') {
+        const chatBox = document.getElementById('chat-box');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = data.message;
+        chatBox.appendChild(messageElement);
+      }
+    };
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
-    });
+    ws.onclose = (event) => {
+      console.log('Disconnected from server:', event.reason);
+    };
 
-    socket.on('connect_error', (error) => {
-      console.error('Connection error:', error.message);
-    });
-
-    socket.on('error', (error) => {
-      console.error('Socket error:', error);
-    });
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
     const sendMessage = () => {
       const messageInput = document.getElementById('message-input');
       const message = messageInput.value;
 
       if (message.trim() !== '') {
-        socket.emit('sendMessage', { message });
+        ws.send(message);
         messageInput.value = '';
       }
     };
