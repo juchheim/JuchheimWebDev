@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
-const SOCKET_SERVER_URL = 'wss://juchheim.local:4000'; // Use your HTTPS server URL
+const SOCKET_SERVER_URL = 'wss://juchheim.online:4000'; // Use your HTTPS server URL
 
 const Chat = ({ token }) => {
     const [messages, setMessages] = useState([]);

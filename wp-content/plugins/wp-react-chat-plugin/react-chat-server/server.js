@@ -15,7 +15,7 @@ const credentials = { key: privateKey, cert: certificate };
 const server = https.createServer(credentials, app);
 const io = socketIo(server, {
     cors: {
-        origin: 'https://juchheim.local',
+        origin: 'https://juchheim.online',
         methods: ["GET", "POST"],
         allowedHeaders: ["Authorization"],
         credentials: true
