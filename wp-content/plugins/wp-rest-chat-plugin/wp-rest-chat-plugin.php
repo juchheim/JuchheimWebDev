@@ -12,7 +12,7 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'get_chat_messages',
         'permission_callback' => function () {
-            return current_user_can('read');
+            return is_user_logged_in();
         },
     ));
 
@@ -20,7 +20,7 @@ add_action('rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'send_chat_message',
         'permission_callback' => function () {
-            return current_user_can('read');
+            return is_user_logged_in();
         },
     ));
 });
@@ -76,7 +76,7 @@ add_action('wp_enqueue_scripts', function () {
         wp_localize_script('wp-rest-chat-frontend', 'wpRestChat', array(
             'apiUrl' => esc_url_raw(rest_url('chat/v1/')),
             'user' => wp_get_current_user()->user_login,
-            'token' => wp_create_nonce('wp_rest'), // Use a nonce for security
+            'nonce' => wp_create_nonce('wp_rest'),
         ));
     } else {
         error_log('Error: main.js file not found in build directory.');

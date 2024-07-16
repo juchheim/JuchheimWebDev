@@ -5,32 +5,33 @@ function App() {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
 
-    const fetchMessages = async () => {
-        try {
-            if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
-                throw new Error('Missing API URL or user data.');
-            }
-            const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
-                headers: {
-                    'Authorization': `Bearer ${window.wpRestChat.token}`
-                }
-            });
-            const data = await response.json();
-            if (Array.isArray(data)) {
-                setMessages(data);
-            } else {
-                console.error('Unexpected response data:', data);
-            }
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        }
-    };
-
     useEffect(() => {
-        fetchMessages();
-        const interval = setInterval(fetchMessages, 5000); // Fetch messages every 5 seconds
+        async function fetchMessages() {
+            try {
+                if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
+                    throw new Error('Missing API URL or user data.');
+                }
+                const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
+                    headers: {
+                        'X-WP-Nonce': window.wpRestChat.nonce,
+                    },
+                });
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    setMessages(data);
+                } else {
+                    console.error('Unexpected response data:', data);
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
 
-        return () => clearInterval(interval); // Cleanup on unmount
+        fetchMessages();
+
+        // Fetch new messages every 5 seconds
+        const interval = setInterval(fetchMessages, 5000);
+        return () => clearInterval(interval);
     }, []);
 
     const handleSubmit = async (e) => {
@@ -42,7 +43,7 @@ function App() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${window.wpRestChat.token}`
+                    'X-WP-Nonce': window.wpRestChat.nonce,
                 },
                 body: JSON.stringify({
                     content: message,
