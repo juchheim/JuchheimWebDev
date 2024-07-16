@@ -70,6 +70,8 @@ const Chat = ({ token }) => {
             console.log('Sending message:', message);
             socketRef.current.emit('chat message', message);
             setMessage('');
+        } else {
+            console.log('Attempted to send empty message');
         }
     };
 

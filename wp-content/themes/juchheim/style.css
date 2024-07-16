@@ -1566,6 +1566,11 @@ h5 {
   .bio-content a:hover {
 	text-decoration: underline;
   }
+
+  #react-chat-app ul li {
+	color: white !important;
+  }
+
   
   /* Responsive design */
 @media (max-width: 1024px) {
