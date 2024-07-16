@@ -4,35 +4,31 @@ import './App.css';
 function App() {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
-    const [user, setUser] = useState('');
 
-    useEffect(() => {
-        // Fetch initial user data
-        if (window.wpRestChat && window.wpRestChat.user) {
-            setUser(window.wpRestChat.user);
-        }
-    }, []);
-
-    useEffect(() => {
-        async function fetchMessages() {
-            try {
-                if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
-                    throw new Error('Missing API URL or user data.');
-                }
-                const response = await fetch(`${window.wpRestChat.apiUrl}messages`);
-                const data = await response.json();
-                if (Array.isArray(data)) {
-                    setMessages(data);
-                } else {
-                    console.error('Unexpected response data:', data);
-                }
-            } catch (error) {
-                console.error('Error fetching messages:', error);
+    const fetchMessages = async () => {
+        try {
+            if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
+                throw new Error('Missing API URL or user data.');
             }
+            const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
+                headers: {
+                    'Authorization': `Bearer ${window.wpRestChat.token}`
+                }
+            });
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                setMessages(data);
+            } else {
+                console.error('Unexpected response data:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
         }
+    };
 
+    useEffect(() => {
         fetchMessages();
-        const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+        const interval = setInterval(fetchMessages, 5000); // Fetch messages every 5 seconds
 
         return () => clearInterval(interval); // Cleanup on unmount
     }, []);
@@ -46,6 +42,7 @@ function App() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${window.wpRestChat.token}`
                 },
                 body: JSON.stringify({
                     content: message,
@@ -59,10 +56,6 @@ function App() {
             console.error('Error sending message:', error);
         }
     };
-
-    if (!user) {
-        return <div>Please log in to access the chat.</div>;
-    }
 
     return (
         <div>
