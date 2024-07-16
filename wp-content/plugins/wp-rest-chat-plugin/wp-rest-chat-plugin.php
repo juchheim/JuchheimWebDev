@@ -12,16 +12,16 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'get_chat_messages',
         'permission_callback' => function () {
-            return is_user_logged_in();
-        }
+            return current_user_can('read');
+        },
     ));
 
     register_rest_route('chat/v1', '/messages', array(
         'methods' => 'POST',
         'callback' => 'send_chat_message',
         'permission_callback' => function () {
-            return is_user_logged_in();
-        }
+            return current_user_can('read');
+        },
     ));
 });
 
@@ -84,12 +84,14 @@ add_action('wp_enqueue_scripts', function () {
 
 // Shortcode to render the chat app
 function wp_rest_chat_shortcode() {
-    if (!is_user_logged_in()) {
-        return '<div>Please log in to access the chat.</div>';
+    if (is_user_logged_in()) {
+        return '<div id="wp-rest-chat-app"></div>';
+    } else {
+        return '<p>Please log in to access the chat.</p>';
     }
-    return '<div id="wp-rest-chat-app"></div>';
 }
 add_shortcode('wp_rest_chat', 'wp_rest_chat_shortcode');
+
 
 // Create the chat messages table on plugin activation
 register_activation_hook(__FILE__, function () {
