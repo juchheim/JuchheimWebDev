@@ -10,3 +10,5 @@
 [16-Jul-2024 19:55:27 UTC] PHP Parse error:  Unclosed '(' on line 109 in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-content/plugins/wp-rest-chat-plugin/wp-rest-chat-plugin.php on line 110
 [16-Jul-2024 19:55:27 UTC] PHP Notice:  Function is_embed was called incorrectly. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a>Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.) in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/functions.php on line 6078
 [16-Jul-2024 19:55:27 UTC] PHP Notice:  Function is_search was called incorrectly. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a>Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.) in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/functions.php on line 6078
+[16-Jul-2024 19:56:05 UTC] Enqueuing script: main.0daf1a79.js
+[16-Jul-2024 19:56:39 UTC] Enqueuing script: main.ad07037d.js
