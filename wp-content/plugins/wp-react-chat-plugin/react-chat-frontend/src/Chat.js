@@ -15,7 +15,8 @@ const Chat = ({ token }) => {
 
         socketRef.current = io(SOCKET_SERVER_URL, {
             auth: { token },
-            transports: ['websocket']
+            transports: ['websocket'],
+            timeout: 60000, // Set to 60 seconds for increased timeout
         });
 
         const socket = socketRef.current;
