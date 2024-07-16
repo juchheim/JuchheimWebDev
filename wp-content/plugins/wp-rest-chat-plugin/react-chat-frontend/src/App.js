@@ -4,7 +4,14 @@ import './App.css';
 function App() {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
-    const user = window.wpRestChat.user;
+    const [user, setUser] = useState('');
+
+    useEffect(() => {
+        // Fetch initial user data
+        if (window.wpRestChat && window.wpRestChat.user) {
+            setUser(window.wpRestChat.user);
+        }
+    }, []);
 
     useEffect(() => {
         async function fetchMessages() {
@@ -12,11 +19,7 @@ function App() {
                 if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
                     throw new Error('Missing API URL or user data.');
                 }
-                const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
-                    headers: {
-                        'X-WP-Nonce': window.wpRestChat.nonce,
-                    },
-                });
+                const response = await fetch(`${window.wpRestChat.apiUrl}messages`);
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setMessages(data);
@@ -28,12 +31,11 @@ function App() {
             }
         }
 
-        if (user) {
-            fetchMessages();
-            const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
-            return () => clearInterval(interval); // Cleanup on unmount
-        }
-    }, [user]);
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,7 +46,6 @@ function App() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-WP-Nonce': window.wpRestChat.nonce,
                 },
                 body: JSON.stringify({
                     content: message,
@@ -68,7 +69,7 @@ function App() {
             <ul>
                 {messages.map((msg, index) => (
                     <li key={index} style={{ color: 'white' }}>
-                        <strong>{msg.user}:</strong> {msg.content}
+                        <strong>{msg.user}</strong>: {msg.content}
                     </li>
                 ))}
             </ul>
