@@ -215,5 +215,31 @@ function enqueue_portfolio_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_portfolio_scripts');
 
 
+add_action('template_redirect', function () {
+    if (is_admin()) {
+        return;
+    }
+
+    global $wp;
+    if (!$wp) {
+        error_log('Global $wp is not set.');
+        return;
+    }
+
+    $current_url = home_url(add_query_arg([], $wp->request));
+    
+    // Log the current URL being accessed
+    error_log('Current URL: ' . $current_url);
+
+    if (is_404()) {
+        error_log('404 error detected for: ' . $current_url);
+    }
+
+    // Check for redirections
+    if (!empty($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] !== $current_url) {
+        error_log('Redirect detected from: ' . $_SERVER['HTTP_REFERER'] . ' to: ' . $current_url);
+    }
+});
+
 
 ?>

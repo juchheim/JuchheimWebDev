@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import { useParams, useNavigate } from 'react-router-dom';
 
-function App() {
+function ChatRoomComponent() {
+    const { roomId } = useParams();
+    const navigate = useNavigate();
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
+        console.log(`Entering ChatRoomComponent for roomId: ${roomId}`);
+
         async function fetchMessages() {
             try {
-                if (!window.wpRestChat || !window.wpRestChat.apiUrl) {
-                    throw new Error('Missing API URL or user data.');
-                }
-                const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
+                const response = await fetch(`${window.wpRestChat.apiUrl}messages/${roomId}`, {
                     headers: {
                         'X-WP-Nonce': window.wpRestChat.nonce,
                     },
                 });
                 const data = await response.json();
+                console.log(`Fetched messages for roomId ${roomId}:`, data);
                 if (Array.isArray(data)) {
                     setMessages(data);
                 } else {
@@ -28,16 +30,16 @@ function App() {
         }
 
         fetchMessages();
-        const interval = setInterval(fetchMessages, 5000); // Poll for new messages every 5 seconds
+        const interval = setInterval(fetchMessages, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [roomId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (message.trim() === '') return;
 
         try {
-            const response = await fetch(`${window.wpRestChat.apiUrl}messages`, {
+            const response = await fetch(`${window.wpRestChat.apiUrl}messages/${roomId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,21 +48,17 @@ function App() {
                 body: JSON.stringify({
                     content: message,
                     user: window.wpRestChat.user,
+                    room_id: roomId,
                 }),
             });
             const newMessage = await response.json();
+            console.log('Message sent:', newMessage);
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
         }
     };
-
-    if (!showChat) {
-        return (
-            <button onClick={() => setShowChat(true)}>Enter Chat</button>
-        );
-    }
 
     return (
         <div>
@@ -83,4 +81,4 @@ function App() {
     );
 }
 
-export default App;
+export default ChatRoomComponent;

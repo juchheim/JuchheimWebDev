@@ -1567,10 +1567,14 @@ h5 {
 	text-decoration: underline;
   }
 
-  #react-chat-app ul li {
-	color: white !important;
-  }
+#wp-rest-chat-app em {
+	color:#a1b6bb;
+}
 
+#wp-rest-chat-app div {
+	color: white;
+	text-align: center;
+}
   
   /* Responsive design */
 @media (max-width: 1024px) {
