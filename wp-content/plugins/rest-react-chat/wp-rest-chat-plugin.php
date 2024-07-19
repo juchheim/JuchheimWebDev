@@ -207,3 +207,22 @@ register_activation_hook(__FILE__, function () {
 
     dbDelta($sql);
 });
+
+function chat_rooms_admin_page() {
+    ?>
+    <div id="admin-root"></div>
+    <script src="<?php echo plugin_dir_url(__FILE__); ?>react-chat-frontend/build/static/js/admin.js"></script>
+    <?php
+}
+
+// Example logging function
+function log_to_console($message) {
+    if (is_array($message) || is_object($message)) {
+        echo("<script>console.log('PHP: " . json_encode($message) . "');</script>");
+    } else {
+        echo("<script>console.log('PHP: " . $message . "');</script>");
+    }
+}
+
+// Usage example
+log_to_console('Chat room route accessed.');

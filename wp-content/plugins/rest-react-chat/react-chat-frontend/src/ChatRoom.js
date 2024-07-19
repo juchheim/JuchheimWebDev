@@ -8,7 +8,7 @@ function ChatRoom() {
 
     useEffect(() => {
         console.log('Rendering ChatRoom component for room:', roomId);
-
+        // Add more logs here if needed
         async function fetchMessages() {
             console.log('Fetching messages for room:', roomId);
             try {
@@ -39,6 +39,7 @@ function ChatRoom() {
         if (message.trim() === '') return;
 
         try {
+            console.log('Sending message to room:', roomId);
             const response = await fetch(`${window.wpRestChat.apiUrl}messages/${roomId}`, {
                 method: 'POST',
                 headers: {
@@ -52,6 +53,7 @@ function ChatRoom() {
                 }),
             });
             const newMessage = await response.json();
+            console.log('Message sent:', newMessage);
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setMessage('');
         } catch (error) {
@@ -63,7 +65,7 @@ function ChatRoom() {
         <div>
             <ul>
                 {messages.map((msg, index) => (
-                    <li key={index}>
+                    <li key={index} style={{ color: 'white' }}>
                         <strong>{msg.user}</strong>: {msg.content} <em>({new Date(msg.timestamp).toLocaleTimeString()})</em>
                     </li>
                 ))}

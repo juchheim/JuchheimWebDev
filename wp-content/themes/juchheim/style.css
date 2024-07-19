@@ -1575,6 +1575,11 @@ h5 {
 	color: white;
 	text-align: center;
 }
+
+#root li {
+	color: white;
+	text-align: center;
+}
   
   /* Responsive design */
 @media (max-width: 1024px) {
