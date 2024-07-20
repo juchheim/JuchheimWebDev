@@ -227,19 +227,32 @@ add_action('template_redirect', function () {
     }
 
     $current_url = home_url(add_query_arg([], $wp->request));
-    
-    // Log the current URL being accessed
-    error_log('Current URL: ' . $current_url);
 
     if (is_404()) {
         error_log('404 error detected for: ' . $current_url);
     }
 
-    // Check for redirections
-    if (!empty($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] !== $current_url) {
-        error_log('Redirect detected from: ' . $_SERVER['HTTP_REFERER'] . ' to: ' . $current_url);
-    }
 });
+
+add_action( 'template_redirect', 'redirect_to_login_if_not_logged_in' );
+
+function redirect_to_login_if_not_logged_in() {
+    // Check if the custom query parameter is set and the user is not logged in
+    if ( isset($_GET['check_login']) && ! is_user_logged_in() ) {
+        // Get the current URL
+        $current_url = home_url( $_SERVER['REQUEST_URI'] );
+        // Redirect to the login page with a redirect_to parameter
+        wp_redirect( wp_login_url( $current_url ) );
+        exit;
+    }
+
+    // If the user is logged in and the custom query parameter is set, redirect to /subscriptions
+    if ( isset($_GET['check_login']) && is_user_logged_in() ) {
+        wp_redirect( home_url('/subscriptions/') );
+        exit;
+    }
+}
+
 
 
 ?>

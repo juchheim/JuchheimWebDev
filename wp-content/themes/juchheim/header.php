@@ -27,7 +27,7 @@
 <body <?php body_class(); ?>>
     <?php if ( ! is_user_logged_in() ) : ?>
         <div class="login-button">
-            <a href="<?php echo wp_login_url(); ?>">Login</a>
+            <a href="<?php echo home_url('/subscriptions/?check_login=true'); ?>">Manage Plan</a>
         </div>
         <div class="chat-button">
             <a href="/chat">Chat</a>

@@ -37,7 +37,7 @@ function debug_rest_chat_shortcode() {
     $output = '<div id="rest-chat-wrapper">';
 
     if ($can_create_room) {
-        $output .= '<div style="text-align: center;"><button id="create-room-button">Enter Chat</button></div>';
+        $output .= '<div style="text-align: center;"><button id="create-room-button">Create a Chat Room</button></div>';
     } elseif ($can_list_rooms) {
         $output .= '<div id="chat-rooms-list">Administrator: List chat rooms will be here.</div>';
     } else {
@@ -124,6 +124,14 @@ function wp_rest_chat_create_room(WP_REST_Request $request) {
     ));
 
     $room_id = $wpdb->insert_id;
+
+    // Send email notification
+    $subject = 'New Chat Room Created';
+    $message = 'A new chat room has been created with ID: ' . $room_id . "\n";
+    $message .= 'You can access the chat room here: ' . home_url('/chat/') . "\n";
+    $recipients = array('juchheim@gmail.com', 'ernest@juchheim.online');
+
+    wp_mail($recipients, $subject, $message);
 
     return new WP_REST_Response(array(
         'room_id' => $room_id,
