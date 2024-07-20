@@ -1501,7 +1501,25 @@ h5 {
 }
 
 
+.chat-button {
+	position: fixed;
+	top: 10px;
+	right: 240px;
+	color: white;
+	padding: 10px 20px;
+	text-align: center;
+	border-radius: 0px;
+	text-decoration: none;
+	z-index: 1000; /* Ensure it is above other elements */
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+    background-color: rgba(80, 214, 248, 0.1);
+    border: 1px dashed rgba(80, 214, 248, 0.8);
+}
 
+.chat-button a {
+	color: white;
+	text-decoration: none;
+}
 
 
 
@@ -1624,7 +1642,8 @@ h5 {
 #chat-rooms-list li {
     list-style: none;
     margin-bottom: 10px;
-
+	padding: 0;
+	margin: 0;
 }
 
 #chat-rooms-list .room-button {

@@ -37,7 +37,7 @@ function debug_rest_chat_shortcode() {
     $output = '<div id="rest-chat-wrapper">';
 
     if ($can_create_room) {
-        $output .= '<div><button id="create-room-button">Create a Chat Room</button></div>';
+        $output .= '<div style="text-align: center;"><button id="create-room-button">Enter Chat</button></div>';
     } elseif ($can_list_rooms) {
         $output .= '<div id="chat-rooms-list">Administrator: List chat rooms will be here.</div>';
     } else {

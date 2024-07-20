@@ -13,3 +13,91 @@
 [20-Jul-2024 18:39:06 UTC] Cron reschedule event error for hook: action_scheduler_run_queue, Error code: could_not_set, Error message: The cron event list could not be saved., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
 [20-Jul-2024 18:45:06 UTC] Cron reschedule event error for hook: action_scheduler_run_queue, Error code: could_not_set, Error message: The cron event list could not be saved., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
 [20-Jul-2024 18:53:06 UTC] Cron reschedule event error for hook: action_scheduler_run_queue, Error code: could_not_set, Error message: The cron event list could not be saved., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
+[20-Jul-2024 19:07:22 UTC] PHP Notice:  Function register_rest_route was called incorrectly. The REST API route definition for juchheim-stripe/v1/webhook is missing the required permission_callback argument. For REST API routes that are intended to be public, use __return_true as the permission callback. Please see <a>Debugging in WordPress</a> for more information. (This message was added in version 5.5.0.) in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/functions.php on line 6078
+[20-Jul-2024 19:07:22 UTC] PHP Notice:  Function register_rest_route was called incorrectly. The REST API route definition for custom/v1/checkout is missing the required permission_callback argument. For REST API routes that are intended to be public, use __return_true as the permission callback. Please see <a>Debugging in WordPress</a> for more information. (This message was added in version 5.5.0.) in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/functions.php on line 6078
+[20-Jul-2024 19:07:22 UTC] PHP Notice:  Function register_rest_route was called incorrectly. The REST API route definition for custom/v1/webhook is missing the required permission_callback argument. For REST API routes that are intended to be public, use __return_true as the permission callback. Please see <a>Debugging in WordPress</a> for more information. (This message was added in version 5.5.0.) in /Users/ejuchheim/Local Sites/juchheim/app/public/wp-includes/functions.php on line 6078
+[20-Jul-2024 19:10:18 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:13:35 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:13:38 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:13:49 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:16:16 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:16:41 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:19:40 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:19:43 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:19:58 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:20:09 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:20:12 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:20:36 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:20:37 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:21:24 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:23:57 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:24:52 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:25:13 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:26:03 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:36:53 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 19:36:53 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 19:37:12 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:37:35 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:39:58 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:40:49 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:41:34 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:42:07 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:43:02 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:43:45 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:44:41 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:46:03 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:46:07 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:46:42 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:47:05 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:47:08 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:47:29 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:47:33 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 19:47:33 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 19:47:41 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:47:43 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:49:19 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:49:50 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:51:14 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:55:48 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:56:00 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:57:55 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:58:37 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:59:30 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 19:59:49 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:00:18 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:00:30 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:01:10 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:03:01 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:03:25 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:03:59 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:04:40 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:05:50 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:07:45 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:07:49 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:07:49 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:07:54 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:07:54 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:08:38 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:08:38 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:09:40 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:09:40 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:10:05 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:10:05 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:10:16 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:10:16 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:10:24 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:10:24 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:10:30 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:10:30 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:10:37 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:10:37 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:11:28 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:11:28 UTC] Redirect detected from: https://juchheim.local/ to: https://juchheim.local/chat
+[20-Jul-2024 20:12:42 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:12:42 UTC] Redirect detected from: https://juchheim.local/ to: https://juchheim.local/chat
+[20-Jul-2024 20:13:05 UTC] Current URL: https://juchheim.local/chat
+[20-Jul-2024 20:13:05 UTC] Redirect detected from: https://juchheim.local/ to: https://juchheim.local/chat
+[20-Jul-2024 20:13:12 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:13:12 UTC] Redirect detected from: https://juchheim.local/chat/ to: https://juchheim.local
+[20-Jul-2024 20:13:14 UTC] Current URL: https://juchheim.local
+[20-Jul-2024 20:13:14 UTC] Redirect detected from: https://juchheim.local/ to: https://juchheim.local

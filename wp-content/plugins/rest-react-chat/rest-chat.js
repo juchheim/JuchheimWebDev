@@ -37,7 +37,6 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 console.log('Rooms listed:', response);
-                response.reverse(); // Reverse the order of rooms
                 var roomsHtml = '<ul>';
                 response.forEach(function(room) {
                     roomsHtml += '<li><button class="room-button" data-room-id="' + room.id + '">Room ' + room.id + ' - Created At: ' + room.created_at + '</button></li>';
@@ -72,11 +71,9 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 console.log('Messages fetched:', response);
                 var messagesHtml = '<ul>';
-                response.reverse(); // Reverse the order of messages
                 response.forEach(function(message) {
                     messagesHtml += '<li><strong>' + message.user + ':</strong> ' + message.content + ' <span class="timestamp">(' + message.timestamp + ')</span></li>';
                 });
-                messagesHtml += '</ul>';
                 $('#chat-messages').html(messagesHtml);
             },
             error: function(error) {
