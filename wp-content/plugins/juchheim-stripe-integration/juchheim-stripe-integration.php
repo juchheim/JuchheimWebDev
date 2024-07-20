@@ -558,20 +558,6 @@ add_action('wp_ajax_juchheim_cancel_subscription', 'juchheim_cancel_subscription
 add_action('wp_ajax_nopriv_juchheim_cancel_subscription', 'juchheim_cancel_subscription');
 
 
-// Redirect Subscribers to Subscriptions Page Upon Login
-function juchheim_redirect_subscribers($redirect_to, $request, $user) {
-    // Is there a user to check?
-    if (isset($user->roles) && is_array($user->roles)) {
-        // Check if the user is a subscriber
-        if (in_array('subscriber', $user->roles)) {
-            // Redirect them to the subscriptions page
-            return home_url('/subscriptions/');
-        }
-    }
-    return $redirect_to;
-}
-add_filter('login_redirect', 'juchheim_redirect_subscribers', 10, 3);
-
 // Hide the Admin Bar for Subscribers
 function juchheim_hide_admin_bar_for_subscribers() {
     if (is_user_logged_in()) {

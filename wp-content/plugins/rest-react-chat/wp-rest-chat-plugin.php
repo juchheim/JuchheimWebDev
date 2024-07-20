@@ -1,81 +1,166 @@
 <?php
 /**
- * Plugin Name: WP REST/React Chat Plugin
- * Description: A simple chat plugin using the WordPress REST API.
+ * Plugin Name: Debug REST Chat
+ * Description: A simplified chat plugin for debugging roles and permissions.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Ernest Juchheim
  */
+
+// Hook to check user login and redirect if necessary
+add_action('template_redirect', 'check_user_login_and_redirect');
+function check_user_login_and_redirect() {
+    if (is_page('chat') && !is_user_logged_in()) {
+        // Redirect to login page
+        $login_url = wp_login_url(home_url('/chat/'));
+        wp_safe_redirect($login_url);
+        exit();
+    }
+}
+
+// Shortcode to display role-based content and generate nonce
+function debug_rest_chat_shortcode() {
+    if (!is_user_logged_in()) {
+        return '<p>Please log in to access the chat.</p>';
+    }
+
+    $current_user = wp_get_current_user();
+    $roles = $current_user->roles;
+
+    // Check user capabilities
+    $can_create_room = current_user_can('subscriber');
+    $can_list_rooms = current_user_can('administrator');
+
+    // Generate nonce for REST API
+    $nonce = wp_create_nonce('wp_rest');
+
+    // Display roles and capabilities with debug information
+    $output = '<div id="rest-chat-wrapper">';
+
+    if ($can_create_room) {
+        $output .= '<div><button id="create-room-button">Create a Chat Room</button></div>';
+    } elseif ($can_list_rooms) {
+        $output .= '<div id="chat-rooms-list">Administrator: List chat rooms will be here.</div>';
+    } else {
+        $output .= '<p>Please log in to access the chat.</p>';
+    }
+
+    // Add hidden elements for managing chat rooms and messages
+    $output .= '<div id="chat-room-container">';
+    $output .= '<div id="chat-messages"></div>';
+    $output .= '<input type="hidden" id="room-id">';
+    $output .= '<input type="text" id="message-content" placeholder="Enter your message">';
+    $output .= '<br><button id="post-message-button">Send Message</button>';
+    $output .= '</div>';
+
+    $output .= '</div>';
+    return $output;
+}
+add_shortcode('debug_rest_chat', 'debug_rest_chat_shortcode');
+
+// Enqueue and localize the script with nonce
+function enqueue_rest_chat_scripts() {
+    $script_url = plugins_url('rest-chat.js', __FILE__);
+    wp_enqueue_script('rest-chat', $script_url, array('jquery'), null, true);
+
+    // Localize script with nonce and API URL
+    wp_localize_script('rest-chat', 'restChatSettings', array(
+        'nonce' => wp_create_nonce('wp_rest'),
+        'apiUrl' => rest_url('wp-rest-chat/v1/'),
+        'currentUser' => wp_get_current_user()->user_login,
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_rest_chat_scripts');
 
 // Register REST API routes
 add_action('rest_api_init', function () {
-    register_rest_route('chat/v1', '/messages/(?P<room_id>\d+)', array(
-        'methods' => 'GET',
-        'callback' => 'get_chat_messages',
-        'permission_callback' => function () {
-            return is_user_logged_in();
-        },
-    ));
-
-    register_rest_route('chat/v1', '/messages/(?P<room_id>\d+)', array(
+    // Register route for creating a chat room
+    register_rest_route('wp-rest-chat/v1', '/rooms', array(
         'methods' => 'POST',
-        'callback' => 'send_chat_message',
-        'permission_callback' => function () {
-            return is_user_logged_in();
+        'callback' => 'wp_rest_chat_create_room',
+        'permission_callback' => function ($request) {
+            $nonce = $request->get_header('X-WP-Nonce');
+            $is_valid_nonce = wp_verify_nonce($nonce, 'wp_rest');
+            return current_user_can('subscriber') && $is_valid_nonce;
         },
     ));
 
-    register_rest_route('chat/v1', '/rooms', array(
-        'methods' => 'POST',
-        'callback' => 'create_chat_room',
-        'permission_callback' => function () {
-            return is_user_logged_in();
-        },
-    ));
-
-    register_rest_route('chat/v1', '/rooms', array(
+    // Register route for listing chat rooms
+    register_rest_route('wp-rest-chat/v1', '/rooms', array(
         'methods' => 'GET',
-        'callback' => 'get_chat_rooms',
+        'callback' => 'wp_rest_chat_list_rooms',
         'permission_callback' => function () {
             return current_user_can('administrator');
         },
     ));
 
-    error_log('Registered REST API routes for chat/v1');
+    // Register route for getting messages
+    register_rest_route('wp-rest-chat/v1', '/messages/(?P<room_id>\d+)', array(
+        'methods' => 'GET',
+        'callback' => 'wp_rest_chat_get_messages',
+        'permission_callback' => function () {
+            return is_user_logged_in();
+        },
+    ));
+
+    // Register route for posting messages
+    register_rest_route('wp-rest-chat/v1', '/messages/(?P<room_id>\d+)', array(
+        'methods' => 'POST',
+        'callback' => 'wp_rest_chat_post_room_message',
+        'permission_callback' => function ($request) {
+            $nonce = $request->get_header('X-WP-Nonce');
+            $is_valid_nonce = wp_verify_nonce($nonce, 'wp_rest');
+            return is_user_logged_in() && $is_valid_nonce;
+        },
+    ));
 });
 
-function get_chat_messages($request) {
-    error_log('Fetching chat messages...');
-    global $wpdb;
-    $room_id = $request['room_id'];
-    $table_name = $wpdb->prefix . 'chat_messages';
-    $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE room_id = %d ORDER BY timestamp ASC", $room_id));
-    error_log('Fetched messages: ' . json_encode($results));
-    return $results;
-}
-
-function create_chat_room(WP_REST_Request $request) {
-    error_log('Creating new chat room...');
+// Function to create a chat room
+function wp_rest_chat_create_room(WP_REST_Request $request) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'chat_rooms';
+
     $wpdb->insert($table_name, array(
         'created_at' => current_time('mysql'),
     ));
+
     $room_id = $wpdb->insert_id;
-    error_log('Created new chat room: ' . $room_id);
-    return array('room_id' => $room_id);
+
+    return new WP_REST_Response(array(
+        'room_id' => $room_id,
+    ), 200);
 }
 
-function get_chat_rooms() {
-    error_log('Fetching chat rooms...');
+// Function to list chat rooms
+function wp_rest_chat_list_rooms(WP_REST_Request $request) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'chat_rooms';
-    $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
-    error_log('Fetched chat rooms: ' . json_encode($results));
-    return $results;
+
+    $rooms = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
+
+    $data = array();
+
+    foreach ($rooms as $room) {
+        $data[] = array(
+            'id' => $room->id,
+            'created_at' => $room->created_at,
+        );
+    }
+
+    return new WP_REST_Response($data, 200);
 }
 
+// Function to get messages in a chat room
+function wp_rest_chat_get_messages(WP_REST_Request $request) {
+    global $wpdb;
+    $room_id = $request['room_id'];
+    $table_name = $wpdb->prefix . 'chat_messages';
+    $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE room_id = %d ORDER BY timestamp DESC", $room_id));
 
-function send_chat_message(WP_REST_Request $request) {
+    return new WP_REST_Response($results, 200);
+}
+
+// Function to post a message to a chat room
+function wp_rest_chat_post_room_message(WP_REST_Request $request) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'chat_messages';
 
@@ -83,7 +168,6 @@ function send_chat_message(WP_REST_Request $request) {
     $content = sanitize_text_field($data['content']);
     $user = sanitize_text_field($data['user']);
     $room_id = intval($data['room_id']);
-    error_log('Sending message to room: ' . $room_id . ' User: ' . $user);
 
     $wpdb->insert($table_name, array(
         'content' => $content,
@@ -93,93 +177,32 @@ function send_chat_message(WP_REST_Request $request) {
     ));
 
     $message_id = $wpdb->insert_id;
-    error_log('Sent message ID: ' . $message_id);
 
-    return array(
+    return new WP_REST_Response(array(
         'id' => $message_id,
         'content' => $content,
         'user' => $user,
         'room_id' => $room_id,
         'timestamp' => current_time('mysql'),
-    );
+    ), 200);
 }
 
-// Register the admin menu
-function register_chat_admin_page() {
-    add_menu_page(
-        'Chat Rooms',  // Page title
-        'Chat Rooms',  // Menu title
-        'manage_options',  // Capability
-        'chat-rooms',  // Menu slug
-        'display_chat_admin_page',  // Function to display the content
-        'dashicons-admin-comments',  // Icon
-        6  // Position
-    );
-}
-add_action('admin_menu', 'register_chat_admin_page');
-
-// Display the admin page content
-function display_chat_admin_page() {
-    echo '<div id="admin-dashboard"></div>';
-}
-
-// Enqueue the admin script
-function enqueue_admin_scripts($hook_suffix) {
-    if ($hook_suffix !== 'toplevel_page_chat-rooms') {
-        return;
-    }
-
-    wp_enqueue_script('wp-rest-chat-admin', plugins_url('admin.js', __FILE__), array(), '1.0.0', true);
-    wp_localize_script('wp-rest-chat-admin', 'wpRestChat', array(
-        'apiUrl' => esc_url_raw(rest_url('chat/v1/')),
-        'user' => wp_get_current_user()->user_login,
-        'nonce' => wp_create_nonce('wp_rest'),
-    ));
-}
-add_action('admin_enqueue_scripts', 'enqueue_admin_scripts');
-
-// Enqueue the React app
-add_action('wp_enqueue_scripts', function () {
-    // Enqueue the main.js file dynamically
-    $build_dir = plugin_dir_path(__FILE__) . 'react-chat-frontend/build/static/js';
-    $files = scandir($build_dir);
-    $main_js = '';
-    foreach ($files as $file) {
-        if (strpos($file, 'main.') === 0 && strpos($file, '.js') !== false) {
-            $main_js = $file;
-            break;
-        }
-    }
-
-    if ($main_js) {
-        error_log('Enqueuing script: ' . $main_js);
-        wp_enqueue_script('wp-rest-chat-frontend', plugins_url('react-chat-frontend/build/static/js/' . $main_js, __FILE__), array(), '1.0.0', true);
-        wp_localize_script('wp-rest-chat-frontend', 'wpRestChat', array(
-            'apiUrl' => esc_url_raw(rest_url('chat/v1/')),
-            'user' => wp_get_current_user()->user_login,
-            'nonce' => wp_create_nonce('wp_rest'),
-        ));
-    } else {
-        error_log('Error: main.js file not found in build directory.');
-    }
-});
-
-// Shortcode to render the chat app
-function wp_rest_chat_shortcode() {
-    if (is_user_logged_in()) {
-        error_log('User logged in, displaying chat app.');
-        return '<div id="wp-rest-chat-app"></div>';
-    } else {
-        error_log('User not logged in.');
-        return '<p>Please log in to access the chat.</p>';
-    }
-}
-add_shortcode('wp_rest_chat', 'wp_rest_chat_shortcode');
-
-// Create the chat messages and rooms tables on plugin activation
+// Create the chat rooms and messages tables on plugin activation
 register_activation_hook(__FILE__, function () {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
+
+    // Create chat rooms table
+    $table_name = $wpdb->prefix . 'chat_rooms';
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 
     // Create chat messages table
     $table_name = $wpdb->prefix . 'chat_messages';
@@ -193,36 +216,5 @@ register_activation_hook(__FILE__, function () {
         PRIMARY KEY (id)
     ) $charset_collate;";
 
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
-
-    // Create chat rooms table
-    $table_name = $wpdb->prefix . 'chat_rooms';
-
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-
     dbDelta($sql);
 });
-
-function chat_rooms_admin_page() {
-    ?>
-    <div id="admin-root"></div>
-    <script src="<?php echo plugin_dir_url(__FILE__); ?>react-chat-frontend/build/static/js/admin.js"></script>
-    <?php
-}
-
-// Example logging function
-function log_to_console($message) {
-    if (is_array($message) || is_object($message)) {
-        echo("<script>console.log('PHP: " . json_encode($message) . "');</script>");
-    } else {
-        echo("<script>console.log('PHP: " . $message . "');</script>");
-    }
-}
-
-// Usage example
-log_to_console('Chat room route accessed.');

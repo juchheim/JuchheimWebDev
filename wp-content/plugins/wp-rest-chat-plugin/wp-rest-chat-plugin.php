@@ -1,113 +1,38 @@
 <?php
 /**
- * Plugin Name: WP REST Chat Plugin
- * Description: A simple chat plugin using the WordPress REST API.
+ * Plugin Name: Minimal Role Check
+ * Description: A minimal plugin to check user roles and capabilities.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Ernest Juchheim
  */
 
-// Register REST API routes
-add_action('rest_api_init', function () {
-    register_rest_route('chat/v1', '/messages', array(
-        'methods' => 'GET',
-        'callback' => 'get_chat_messages',
-        'permission_callback' => function () {
-            return is_user_logged_in();
-        },
-    ));
-
-    register_rest_route('chat/v1', '/messages', array(
-        'methods' => 'POST',
-        'callback' => 'send_chat_message',
-        'permission_callback' => function () {
-            return is_user_logged_in();
-        },
-    ));
-});
-
-function get_chat_messages() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'chat_messages';
-    $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY timestamp ASC");
-
-    return $results;
+// Function to print debug information directly on the page
+function print_debug($message) {
+    echo '<div style="border: 1px solid red; padding: 10px; margin: 10px;">' . $message . '</div>';
 }
 
-function send_chat_message(WP_REST_Request $request) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'chat_messages';
+// Shortcode to display user role and capability checks
+function minimal_role_check_shortcode() {
+    $current_user = wp_get_current_user();
+    $roles = $current_user->roles;
+    $can_create_room = current_user_can('subscriber');
+    $can_list_room = current_user_can('administrator');
 
-    $data = json_decode($request->get_body(), true);
-    $content = sanitize_text_field($data['content']);
-    $user = sanitize_text_field($data['user']);
+    // Display roles and capabilities
+    $output = '<div style="padding: 10px; border: 1px solid green; margin: 10px;">';
+    $output .= '<h3>User Role and Capability Check</h3>';
+    $output .= '<p>User ID: ' . $current_user->ID . '</p>';
+    $output .= '<p>Username: ' . $current_user->user_login . '</p>';
+    $output .= '<p>Roles: ' . implode(', ', $roles) . '</p>';
+    $output .= '<p>Can create room (subscriber): ' . ($can_create_room ? 'Yes' : 'No') . '</p>';
+    $output .= '<p>Can list room (administrator): ' . ($can_list_room ? 'Yes' : 'No') . '</p>';
+    $output .= '</div>';
 
-    $wpdb->insert($table_name, array(
-        'content' => $content,
-        'user' => $user,
-        'timestamp' => current_time('mysql'),
-    ));
-
-    $message_id = $wpdb->insert_id;
-
-    return array(
-        'id' => $message_id,
-        'content' => $content,
-        'user' => $user,
-        'timestamp' => current_time('mysql'),
-    );
+    return $output;
 }
+add_shortcode('minimal_role_check', 'minimal_role_check_shortcode');
 
-// Enqueue the React app
-add_action('wp_enqueue_scripts', function () {
-    // Enqueue the main.js file dynamically
-    $build_dir = plugin_dir_path(__FILE__) . 'react-chat-frontend/build/static/js';
-    $files = scandir($build_dir);
-    $main_js = '';
-    foreach ($files as $file) {
-        if (strpos($file, 'main.') === 0 && strpos($file, '.js') !== false) {
-            $main_js = $file;
-            break;
-        }
-    }
-
-    if ($main_js) {
-        error_log('Enqueuing script: ' . $main_js);
-        wp_enqueue_script('wp-rest-chat-frontend', plugins_url('react-chat-frontend/build/static/js/' . $main_js, __FILE__), array(), '1.0.0', true);
-        wp_localize_script('wp-rest-chat-frontend', 'wpRestChat', array(
-            'apiUrl' => esc_url_raw(rest_url('chat/v1/')),
-            'user' => wp_get_current_user()->user_login,
-            'nonce' => wp_create_nonce('wp_rest'),
-        ));
-    } else {
-        error_log('Error: main.js file not found in build directory.');
-    }
-});
-
-// Shortcode to render the chat app
-function wp_rest_chat_shortcode() {
-    if (is_user_logged_in()) {
-        return '<div id="wp-rest-chat-app"></div>';
-    } else {
-        return '<p>Please log in to access the chat.</p>';
-    }
-}
-add_shortcode('wp_rest_chat', 'wp_rest_chat_shortcode');
-
-// Create the chat messages table on plugin activation
-register_activation_hook(__FILE__, function () {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'chat_messages';
-
-    $charset_collate = $wpdb->get_charset_collate();
-
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        content text NOT NULL,
-        user varchar(255) NOT NULL,
-        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
+// Hook to print debug information when the plugin is loaded
+add_action('init', function() {
+    print_debug('Minimal Role Check Plugin Loaded');
 });
