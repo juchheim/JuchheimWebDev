@@ -1722,12 +1722,18 @@ h5 {
 
 /* GITHUB */
 
+.github-section-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+
 .github-section {
     text-align: center;
-    margin: 20px 0;
-    margin-top: 100px;
-	padding-bottom:30px;
+    margin: 0;
+    padding-bottom: 30px;
     min-width: 300px;
+    width: 50%;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
     background-color: rgba(255, 187, 59, 0.1);
     border: 1px dashed rgba(255, 187, 59, 0.8);
@@ -1736,7 +1742,7 @@ h5 {
 .github-section img {
     width: 32px;
     height: 32px;
-    margin-right: 10px;
+    margin-bottom: 15px;
 }
 
 .github-section a {

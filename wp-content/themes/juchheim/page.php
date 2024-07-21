@@ -109,13 +109,14 @@ get_header();
             </div>
 
             <!-- github -->
-            <div class="github-section">
-                <h2>My GitHub</h2>
-                <a href="https://github.com/juchheim" target="_blank">
-                    <img src="/wp-content/uploads/2024/07/github-mark-white_small.png" alt="GitHub" />
-                    <br />
-                </a>
-                <div id="repo-list"></div>
+            <div class="github-section-container">
+                <div class="github-section">
+                    <h2>My GitHub</h2>
+                    <a href="https://github.com/juchheim" target="_blank">
+                        <img src="/wp-content/uploads/2024/07/github-mark-white_small.png" alt="GitHub" /><br />
+                    </a>
+                    <div id="repo-list"></div>
+                </div>
             </div>
 
 
