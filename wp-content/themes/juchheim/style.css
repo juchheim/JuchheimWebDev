@@ -1720,6 +1720,40 @@ h5 {
 
 /* END CHAT */
 
+/* GITHUB */
+
+.github-section {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.github-section img {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+
+.github-section a {
+    text-decoration: none;
+    color: white;
+}
+
+.github-section a:hover {
+    color: #4078c0;
+}
+
+#repo-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#repo-list li {
+    margin: 5px 0;
+}
+
+/* END GITHUB */
+
+
 
 
   /* Responsive design */

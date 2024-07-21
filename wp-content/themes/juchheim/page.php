@@ -33,17 +33,12 @@ get_header();
         </div>
 
 
-
-
-
-
-
-
-        <h3>Know that you can reach me directly at <?php echo '662-897-8747'; ?> when you have a question or to report an issue.</h3>
-        <h5>I'm here to help <em>whenever</em> you need assistance.</h5>
+<!--
+        <h3>Know that you can reach me directly at <?php // echo '662-897-8747'; ?> when you have a question or to report an issue.</h3>
+        <h5>I'm here to help <em>whenever</em> you need assistance.</h5> -->
 		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
 
-        
+
         
         
         <div id="portfolio"></div>
@@ -114,7 +109,30 @@ get_header();
             </div>
 
 
+            <div class="github-section">
+                <h1>My GitHub</h1>
+                <a href="https://github.com/juchheim" target="_blank">
+                    <img src="/wp-content/uploads/2024/07/github-mark-white_small.png" alt="GitHub" />
+                    Visit my GitHub Profile
+                </a>
+                <ul id="repo-list"></ul>
+            </div>
 
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('https://api.github.com/users/juchheim/repos')
+                    .then(response => response.json())
+                    .then(data => {
+                        let repoList = document.getElementById('repo-list');
+                        data.forEach(repo => {
+                            let listItem = document.createElement('li');
+                            listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
+                            repoList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching repositories:', error));
+            });
+            </script>
 
 
         <?php

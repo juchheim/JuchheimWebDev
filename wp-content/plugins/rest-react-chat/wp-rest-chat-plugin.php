@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Debug REST Chat
- * Description: A simplified chat plugin for debugging roles and permissions.
- * Version: 1.0.0
+ * Plugin Name: Chat using React and the WordPress REST-API
+ * Description: A chat plugin using WordPress user roles. Subscribers can start chats. Administrators recieve notifications and join chats.
+ * Version: 1.0.1
  * Author: Ernest Juchheim
  */
 
