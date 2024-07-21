@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
 
 define('JUCHHEIM_STRIPE_VERSION', '1.0');
 
@@ -52,8 +53,8 @@ function juchheim_handle_form() {
         $price = floatval($form_data['price']) * 100; // convert to cents
     }
 
-    \Stripe\Stripe::setApiKey('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');
-
+    \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+    
     try {
         if ($form_id === 'custom-form') {
             $session = \Stripe\Checkout\Session::create([

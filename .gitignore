@@ -5,10 +5,7 @@ debug.log
 wp-content/debug.log
 wp-content/plugins/chat-plugin/certificate.crt
 wp-content/plugins/chat-plugin/private.key
-wp-content/debug.log
-wp-content/debug.log
-wp-content/debug.log
 wp-content/plugins/rest-react-chat.zip
 wp-content/plugins_and_themes_chat_backup.zip
-wp-content/debug.log
-wp-content/debug.log
+config.php
+
