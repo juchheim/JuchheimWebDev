@@ -110,7 +110,7 @@ get_header();
 
 
             <div class="github-section">
-                <h1>My GitHub</h1>
+                <h2>My GitHub</h2>
                 <a href="https://github.com/juchheim" target="_blank">
                     <img src="/wp-content/uploads/2024/07/github-mark-white_small.png" alt="GitHub" />
                     Visit my GitHub Profile
