@@ -108,15 +108,16 @@ get_header();
                 <button id="view-website-button" style="margin-top: 20px;">View Website</button>
             </div>
 
-
+            <!-- github -->
             <div class="github-section">
                 <h2>My GitHub</h2>
                 <a href="https://github.com/juchheim" target="_blank">
                     <img src="/wp-content/uploads/2024/07/github-mark-white_small.png" alt="GitHub" />
-                    Visit my GitHub Profile
+                    <br />
                 </a>
-                <ul id="repo-list"></ul>
+                <div id="repo-list"></div>
             </div>
+
 
             <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -124,14 +125,23 @@ get_header();
                     .then(response => response.json())
                     .then(data => {
                         let repoList = document.getElementById('repo-list');
-                        data.forEach(repo => {
-                            let listItem = document.createElement('li');
+                        data.forEach((repo, index) => {
+                            let listItem = document.createElement('span');
                             listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
                             repoList.appendChild(listItem);
+                            if (index < data.length - 1) {
+                                let comma = document.createElement('span');
+                                comma.innerHTML = ', ';
+                                comma.style.color = 'white';
+                                repoList.appendChild(comma);
+                            }
                         });
                     })
                     .catch(error => console.error('Error fetching repositories:', error));
             });
+
+
+
             </script>
 
 
