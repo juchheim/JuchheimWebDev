@@ -39,74 +39,145 @@ get_header();
 		<!-- <a href="#"><img class="down-arrow" src="/wp-content/uploads/2024/06/down_arrow.png" /></a> -->
 
 
-        
-        
-        <div id="portfolio"></div>
+        <div class="portfolio-container">
             <h1>Portfolio</h1>
-            <?php
-            // Fetch the Pods instance for 'portfolio'
-            $pods = pods('portfolio', array(
-                'limit' => -1 // Ensure we fetch all entries
-            ));
+            <div class="portfolio-gallery">
+                <?php
+                if ( function_exists( 'pods' ) ) {
+                $params = array(
+                    'limit' => -1,
+                    'orderby' => 'menu_order ASC', // Order by menu order in ascending order
+                    'where' => 'post_status="publish"'
+                );
+                $portfolio = pods('portfolio', $params);
 
-            // Check if there are any entries
-            if ($pods->total() > 0) {
-                echo '<div class="portfolio-grid">';
-                
-                // Loop through the Pods entries
-                while ($pods->fetch()) {
-                    // Get the image, big_image, link, and caption fields
-                    $image = $pods->field('image');
-                    $big_image = $pods->field('big_image');
-                    $link = $pods->field('link');
-                    $caption = $pods->field('caption');
-
-                    // Ensure each field is available before using it
-                    if ($image && is_array($image)) {
-                        $image_url = esc_url($image['guid']);
-                        $image_alt = esc_attr($image['post_title']);
-                    } else {
-                        $image_url = '';
-                        $image_alt = '';
+                if ($portfolio->total() > 0) {
+                    while ($portfolio->fetch()) {
+                    $image = $portfolio->field('image');
+                    $big_images = $portfolio->field('big_image');
+                    $caption = $portfolio->field('caption');
+                    $link = $portfolio->field('link');
+                    ?>
+                    <div class="portfolio-entry" data-big-images='<?php echo json_encode($big_images); ?>' data-caption="<?php echo esc_attr($caption); ?>" data-link="<?php echo esc_url($link); ?>">
+                        <img src="<?php echo esc_url($image['guid']); ?>" alt="">
+                    </div>
+                    <?php
                     }
-
-                    if ($big_image && is_array($big_image)) {
-                        $big_image_url = esc_url($big_image['guid']);
-                    } else {
-                        $big_image_url = '';
-                    }
-
-                    if ($link) {
-                        $link_url = esc_url($link);
-                    } else {
-                        $link_url = '';
-                    }
-
-                    if ($caption) {
-                        $caption_text = esc_html($caption);
-                    } else {
-                        $caption_text = '';
-                    }
-
-                    // Output the portfolio item only if image is available
-                    if ($image_url) {
-                        echo '<figure class="portfolio-item">';
-                        echo '<img src="' . $image_url . '" alt="' . $image_alt . '" class="portfolio-thumb" data-big-image="' . $big_image_url . '" data-link="' . $link_url . '" data-caption="' . $caption_text . '">';
-                        echo '</figure>';
-                    }
+                } else {
+                    echo '<p>No portfolio items found.</p>';
                 }
-                
-                echo '</div>';
-            } else {
-                echo '<p>No portfolio items found.</p>';
-            }
-            ?>
-            <!-- Fullscreen Overlay -->
-            <div id="fullscreen-overlay" style="display:none;">
-                <img id="fullscreen-image" src="" alt="">
-                <div id="fullscreen-caption"></div>
-                <button id="view-website-button" style="margin-top: 20px;">View Website</button>
+                } else {
+                echo '<p>Pods is not activated or not available.</p>';
+                }
+                ?>
             </div>
+            </div>
+
+            <div id="image-modal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modal-image">
+            <div class="navigation">
+                <span class="prev">&laquo;</span>
+                <span class="next">&raquo;</span>
+            </div>
+            <div class="caption" id="modal-caption"></div>
+            <a id="view-website" class="view-website-btn" href="#" target="_blank">View Website</a>
+            </div>
+
+
+
+
+
+        <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+  const portfolioGallery = document.querySelector('.portfolio-gallery');
+  const modal = document.getElementById('image-modal');
+  const modalImage = document.getElementById('modal-image');
+  const modalCaption = document.getElementById('modal-caption');
+  const viewWebsite = document.getElementById('view-website');
+  const closeBtn = document.querySelector('.close');
+  const prevBtn = document.querySelector('.prev');
+  const nextBtn = document.querySelector('.next');
+
+  const portfolioItems = Array.from(document.querySelectorAll('.portfolio-entry'));
+
+  let currentIndex = 0;
+  let currentImageIndex = 0;
+  let currentBigImages = [];
+
+  function openModal(index) {
+    currentIndex = index;
+    currentBigImages = JSON.parse(portfolioItems[index].dataset.bigImages);
+    currentImageIndex = 0;
+    displayImage();
+    checkArrows();
+    modal.style.display = 'flex';
+  }
+
+  function displayImage() {
+    if (currentBigImages[currentImageIndex] && currentBigImages[currentImageIndex].guid) {
+      modalImage.src = currentBigImages[currentImageIndex].guid;
+    } else {
+      modalImage.src = currentBigImages[currentImageIndex];
+    }
+    modalCaption.textContent = portfolioItems[currentIndex].dataset.caption;
+    viewWebsite.href = portfolioItems[currentIndex].dataset.link;
+  }
+
+  function navigate(direction) {
+    currentImageIndex += direction;
+    if (currentImageIndex < 0) {
+      currentImageIndex = currentBigImages.length - 1;
+    } else if (currentImageIndex >= currentBigImages.length) {
+      currentImageIndex = 0;
+    }
+    displayImage();
+  }
+
+  function checkArrows() {
+    if (currentBigImages.length <= 1) {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    } else {
+      prevBtn.style.display = 'block';
+      nextBtn.style.display = 'block';
+    }
+  }
+
+  portfolioGallery.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG') {
+      const index = portfolioItems.indexOf(e.target.parentElement);
+      openModal(index);
+    }
+  });
+
+  closeBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+
+  prevBtn.addEventListener('click', function() {
+    navigate(-1);
+  });
+
+  nextBtn.addEventListener('click', function() {
+    navigate(1);
+  });
+
+  window.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+});
+
+
+
+
+
+
+        </script>
+        
 
             <!-- github -->
             <div class="github-section-container">

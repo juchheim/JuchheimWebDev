@@ -533,19 +533,21 @@ table {
 
 /* Links
 --------------------------------------------- */
-a {
+/*a {
 	color: #4169e1;
 }
 
 a:visited {
 	color: #800080;
-}
+} */
 
+/*
 a:hover,
 a:focus,
 a:active {
 	color: #191970;
 }
+*/
 
 a:focus {
 	outline: thin dotted;
@@ -1148,6 +1150,69 @@ body {
 }
 
 
+/* Fullscreen Overlay */
+#fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+#fullscreen-overlay img {
+    max-width: 90%;
+    max-height: 80%;
+    margin: 10px;
+}
+
+#fullscreen-caption {
+    color: #fff;
+    margin-top: 10px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+#view-website-button {
+    background-color: #ffbb3b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#view-website-button:hover {
+    background-color: #50d6f8;
+}
+
+/* Container for multiple big images */
+#fullscreen-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#fullscreen-images img {
+    max-width: 200px;
+    max-height: 150px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#fullscreen-images img:hover {
+    transform: scale(1.1);
+}
+
+
 
 
 
@@ -1192,6 +1257,128 @@ body {
     background-color: rgba(255, 255, 255, 0.1); /* Slightly visible background on hover */
 }
 
+
+
+.portfolio-container {
+	display: flex;
+	justify-content: center;
+  }
+  
+  .portfolio-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px; /* Increased gap to add more space between images */
+	max-width: 1200px; /* Set a maximum width for the gallery */
+	width: 100%; /* Ensure the gallery takes up the full width within the container */
+  }
+  
+  .portfolio-entry {
+	width: calc(33.333% - 20px); /* Adjusted width to account for increased gap */
+	box-sizing: border-box;
+	overflow: hidden; /* Hide overflow to ensure zoom effect is contained within the entry */
+	position: relative;
+	border-radius: 15px; /* Rounded edges */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Background shadow */
+	transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for zoom and shadow */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .portfolio-entry img {
+	width: 100%;
+	height: auto; /* Maintain aspect ratio */
+	cursor: pointer;
+	transition: transform 0.3s ease; /* Smooth transition for the zoom effect */
+	border-radius: 15px; /* Inherit rounded edges */
+  }
+  
+  .portfolio-entry:hover {
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+  
+  .portfolio-entry img:hover {
+	transform: scale(1.05); /* Zoom in on hover */
+  }
+  
+  .modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.8);
+	justify-content: center;
+	align-items: center;
+	flex-direction: column; /* Ensure the content is stacked vertically */
+	text-align: center; /* Center align the text */
+  }
+  
+  .modal-content {
+	max-width: 90%;
+	max-height: 60%; /* Adjusted to give space for caption and buttons */
+	margin-bottom: 20px; /* Space between image and caption/buttons */
+	position: relative; /* Necessary for absolute positioning of arrows */
+  }
+  
+  .caption {
+	color: white;
+	width: 100%;
+	padding: 10px;
+  }
+  
+  .navigation {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	padding: 10px;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	transform: translateY(-50%);
+  }
+  
+  .prev, .next {
+	cursor: pointer;
+	color: white;
+	font-size: 36px; /* Increased font size */
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 1001; /* Ensure arrows are above other elements */
+  }
+  
+  .prev {
+	left: 10px; /* Adjust position to bring closer to the image */
+	padding-left:100px;
+  }
+  
+  .next {
+	right: 10px; /* Adjust position to bring closer to the image */
+	padding-right:100px;
+  }
+  
+  .view-website-btn {
+	display: block;
+	margin: 20px auto;
+	padding: 10px 20px;
+	background-color: black;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	border: 2px dashed white; 
+  }
+  
+  .view-website-btn a {
+	color: white;
+  }
+  
+  .view-website-btn a:hover {
+	color: white;
+  }
 
 
 
@@ -1779,6 +1966,17 @@ h5 {
 	.bio-image img {
 	  width: 200px;
 	}
+
+	.prev {
+		left: 10px; /* Adjust position to bring closer to the image */
+		padding-left:0;
+	  }
+	  
+	  .next {
+		right: 10px; /* Adjust position to bring closer to the image */
+		padding-right:0;
+	  }
+
   }
   
   @media (max-width: 768px) {
@@ -1806,6 +2004,16 @@ h5 {
 	.bio-content p {
 	  text-align: center;
 	}
+
+	.prev {
+		left: 10px; /* Adjust position to bring closer to the image */
+		padding-left:0;
+	  }
+	  
+	  .next {
+		right: 10px; /* Adjust position to bring closer to the image */
+		padding-right:0;
+	  }
   }
   
   @media (max-width: 480px) {
