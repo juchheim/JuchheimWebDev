@@ -1270,6 +1270,11 @@ body {
 	gap: 20px; /* Increased gap to add more space between images */
 	max-width: 1200px; /* Set a maximum width for the gallery */
 	width: 100%; /* Ensure the gallery takes up the full width within the container */
+	padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+	justify-content: center;
+/*	padding-left:40px; */
   }
   
   .portfolio-entry {
