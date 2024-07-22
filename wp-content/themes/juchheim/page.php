@@ -40,6 +40,7 @@ get_header();
 
 
         <div class="portfolio-container">
+            <div id="portfolio"></div>
             <h1>Portfolio</h1>
             <div class="portfolio-gallery">
                 <?php
