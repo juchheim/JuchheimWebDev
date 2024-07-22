@@ -11,7 +11,7 @@
     gtag('config', 'G-G5KDCG4E3B');
     </script>
     <meta name="description" content="Ernest Juchheim, a professional web developer and designer in Mississippi, specializes in creating custom WordPress websites, themes, and plugins. Serving businesses in the Mississippi Delta region including Greenwood, Yazoo City, Clarksdale, and Greenville. Sign up for web hosting or pay for web development services today." />
-    <meta name="keywords" content="web developer, Mississippi, WordPress developer, custom WordPress themes, WordPress plugins, Mississippi web developer, Mississippi Delta web developer, web design, web development, Greenwood, Yazoo City, Clarksdale, Greenville" />
+    <meta name="keywords" content="web developer, Mississippi, WordPress developer, custom WordPress themes, custom web development services, WordPress plugins, Mississippi web developer, Mississippi Delta web developer, web design, web development, Greenwood, Yazoo City, Clarksdale, Greenville" />
     <meta name="author" content="Ernest Juchheim" />
     <meta property="og:title" content="Ernest Juchheim - Professional Web Developer & Designer in Mississippi" />
     <meta property="og:description" content="Ernest Juchheim, a professional web developer and designer in Yazoo City, Mississippi, specializes in creating custom WordPress websites, themes, and plugins. Serving businesses in the Mississippi Delta region including Greenwood, Yazoo City, Clarksdale, and Greenville. Sign up for web hosting or pay for web development services today." />
