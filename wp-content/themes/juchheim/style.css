@@ -1089,7 +1089,7 @@ body {
 	color: white;
 	text-align: center;
 	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
-	margin-top:70px;
+	margin-top:30px;
 }
 
 .site-main p {
@@ -1262,6 +1262,7 @@ body {
 .portfolio-container {
 	display: flex;
 	justify-content: center;
+	width:100%;
   }
   
   .portfolio-gallery {
@@ -1274,7 +1275,6 @@ body {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
 	justify-content: center;
-/*	padding-left:40px; */
   }
   
   .portfolio-entry {
@@ -1918,7 +1918,7 @@ h5 {
 .github-section-container {
     display: flex;
     justify-content: center;
-    margin-top: 100px;
+    margin-top: 65px;
 }
 
 .github-section {
