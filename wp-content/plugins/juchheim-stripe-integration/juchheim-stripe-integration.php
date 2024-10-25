@@ -150,9 +150,11 @@ function juchheim_display_forms() {
             <button type="submit">Submit</button>
         </form>
     </div>
+
+    <!--
     <div class="content" id="custom">
         <form id="custom-form">
-            <input type="hidden" name="stripe_nonce" value="<?php echo wp_create_nonce('stripe_nonce'); ?>">
+            <input type="hidden" name="stripe_nonce" value="<?php // echo wp_create_nonce('stripe_nonce'); ?>">
             <input type="hidden" name="form_id" value="custom-form">
 
             <p class="custom-note">Choose this option if we've agreed to a price based on your unique needs. Interested in a quote? <a href="mailto:ernest@juchheim.online">Email me.</a></p>
@@ -172,6 +174,7 @@ function juchheim_display_forms() {
             <button type="submit">Submit</button>
         </form>
     </div>
+-->
     <?php
     return ob_get_clean();
 }
